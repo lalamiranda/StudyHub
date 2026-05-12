@@ -73,8 +73,8 @@ public class PessoasDAO {
                 p.setPapel(rs.getString("papel"));
                 p.setStatus(rs.getString("status"));
                 p.setDataCadastro(rs.getString("data_cadastro"));
-                lista.add(p);
-            }
+                lista.add(p) ;
+            }     
             return lista;
         } catch (SQLException erro) {
             System.err.print("Exceção gerada ao tentar buscar os dados: " + erro.getMessage());

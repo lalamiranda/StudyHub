@@ -7,6 +7,42 @@ public class Pessoa {
     private String cpf;
     private String email;
     private String senha;
+    private int reputacao;
+    private String papel;
+    private String status;
+    private String dataCadastro;
+
+    public int getReputacao() {
+        return reputacao;
+    }
+
+    public void setReputacao(int reputacao) {
+        this.reputacao = reputacao;
+    }
+
+    public String getPapel() {
+        return papel;
+    }
+
+    public void setPapel(String papel) {
+        this.papel = papel;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public String getDataCadastro() {
+        return dataCadastro;
+    }
+
+    public void setDataCadastro(String dataCadastro) {
+        this.dataCadastro = dataCadastro;
+    }
 
     public String getNome() {
         return nome;

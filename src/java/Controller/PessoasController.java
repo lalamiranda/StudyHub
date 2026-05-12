@@ -36,7 +36,8 @@ public class PessoasController extends HttpServlet {
                     Pessoa pes = new Pessoa();
                     pes.setCpf(request.getParameter("cpf"));
                     pes.setNome(request.getParameter("nome"));   
-                    pes.setEmail(request.getParameter("email"));   
+                    pes.setEmail(request.getParameter("email"));  
+                    pes.setPapel(request.getParameter("papel"));
                     pes.setSenha(request.getParameter("senha")); 
                     response.sendRedirect("exibe_resultado.jsp?result=" + p.inserir(pes));
                 }

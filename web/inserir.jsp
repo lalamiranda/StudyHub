@@ -13,6 +13,10 @@
             <br><br>
             E-mail <input type="text" name="email"> 
             <br><br>
+            <select name="papel">
+                <option value="ALUNO">Aluno</option>
+                <option value="PROFESSOR">Professor</option>
+            </select>
             Senha <input type="password" name="senha"> 
             <br><br>
             <input type="submit" value="Cadastrar">    

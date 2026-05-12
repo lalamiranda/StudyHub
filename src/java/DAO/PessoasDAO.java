@@ -19,13 +19,14 @@ public class PessoasDAO {
     public boolean inserir(Pessoa p) {
         try {
             String hashSenha = SenhaUtil.hashSenha(p.getSenha());
-            String sql = "insert into pessoa (nome, cpf, email, senha) values (?,?,?,?)";
+            String sql = "insert into pessoa (nome, cpf, email, papel, senha) values (?,?,?,?,?)";
             PreparedStatement ps;
             ps = conexao.conectar().prepareStatement(sql);
             ps.setString(1, p.getNome());
             ps.setString(2, p.getCpf());
             ps.setString(3, p.getEmail());
-            ps.setString(4, hashSenha);
+            ps.setString(4, p.getPapel());
+            ps.setString(5, hashSenha);
             return ps.executeUpdate() != 0;
         } catch (SQLException erro) {
             System.out.println("Exceção causada na inserção");
@@ -68,6 +69,10 @@ public class PessoasDAO {
                 //adicionar este objeto a uma list
                 p.setNome(rs.getString("nome"));
                 p.setCpf(rs.getString("cpf"));
+                p.setReputacao(rs.getInt("reputacao"));
+                p.setPapel(rs.getString("papel"));
+                p.setStatus(rs.getString("status"));
+                p.setDataCadastro(rs.getString("data_cadastro"));
                 lista.add(p);
             }
             return lista;

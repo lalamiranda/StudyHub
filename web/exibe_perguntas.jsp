@@ -20,16 +20,16 @@
                     p = (Pergunta) perguntas.get(cont);
                     out.print("<tr>");
                     out.print("<td>" + p.getTitulo() + "</td>");
-                    out.print("<td>" + p.getDescricao()+ "</td>"); 
+                    out.print("<td>" + p.getDescricao() + "</td>");
+                    out.print("<td><a href='RespostasController?op=2&id_pergunta=" + p.getIdPergunta() + "'>Ver respostas</a></td>");
                     out.print("</tr>");
                 }
                 out.print("</table>");
             }            
         %>
-        
-        
+
         <br><br><br>
-    <center><a href="index.html">Página inicial</a></center>
+        <center><a href="index.html">Página inicial</a></center>
 
     </body>
 </html>

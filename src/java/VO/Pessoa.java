@@ -3,6 +3,7 @@ package VO;
 
 
 public class Pessoa {
+    private int idPessoa;
     private String nome;
     private String cpf;
     private String email;
@@ -12,6 +13,14 @@ public class Pessoa {
     private String status;
     private String dataCadastro;
 
+    public int getIdPessoa() {
+        return idPessoa;
+    }
+
+    public void setIdPessoa(int idPessoa) {
+        this.idPessoa = idPessoa;
+    }
+    
     public int getReputacao() {
         return reputacao;
     }

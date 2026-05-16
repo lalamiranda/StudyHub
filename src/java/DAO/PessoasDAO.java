@@ -73,7 +73,7 @@ public class PessoasDAO {
                 p.setPapel(rs.getString("papel"));
                 p.setStatus(rs.getString("status"));
                 p.setDataCadastro(rs.getString("data_cadastro"));
-                lista.add(p) ;
+                lista.add(p);
             }     
             return lista;
         } catch (SQLException erro) {
@@ -83,4 +83,53 @@ public class PessoasDAO {
             conexao.desconectar();
         }
     }
+    
+    public Pessoa login(String email, String senha) {
+
+    PreparedStatement ps;
+
+    ResultSet rs;
+
+    try {
+
+        String sql = """
+            SELECT * FROM pessoa
+            WHERE email = ?
+            AND senha = ?
+        """;
+
+        ps = conexao.conectar()
+                .prepareStatement(sql);
+
+        ps.setString(1, email);
+        ps.setString(2, senha);
+
+        rs = ps.executeQuery();
+
+        if(rs.next()) {
+
+            Pessoa p = new Pessoa();
+
+            p.setIdPessoa(
+                    rs.getInt("id_pessoa"));
+
+            p.setNome(
+                    rs.getString("nome"));
+
+            return p;
+        }
+
+        return null;
+
+    } catch(SQLException e) {
+
+        System.out.println(e);
+
+        return null;
+
+    } finally {
+
+        conexao.desconectar();
+    }
+}
 }

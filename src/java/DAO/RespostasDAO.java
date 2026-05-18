@@ -104,7 +104,7 @@ public class RespostasDAO {
         }
     }
 
-    public void atualizarCorreta(int idResposta, boolean correta) {
+    public void atualizarCorreta(int idResposta, Boolean correta) {
 
         PreparedStatement ps;
 
@@ -114,7 +114,11 @@ public class RespostasDAO {
 
             ps = conexao.conectar().prepareStatement(sql);
 
-            ps.setBoolean(1, correta);
+            if (correta == null) {
+                ps.setNull(1, java.sql.Types.BOOLEAN);
+            } else {
+                ps.setBoolean(1, correta);
+            }
             ps.setInt(2, idResposta);
 
             ps.executeUpdate();

@@ -35,12 +35,12 @@ public class RespostasController extends HttpServlet {
                 resposta.setResposta(
                         request.getParameter("resposta"));
 
-                resposta.setCorreta(false);
+                resposta.setCorreta(null);
 
                 RespostasDAO dao = new RespostasDAO();
                 dao.inserir(resposta);
 
-                response.sendRedirect("exibir_resposta.jsp?id_pergunta="
+                response.sendRedirect("RespostasController?op=2&id_pergunta="
                         + resposta.getIdPergunta());
                 break;
 
@@ -63,18 +63,27 @@ public class RespostasController extends HttpServlet {
                 int idResposta = Integer.parseInt(
                         request.getParameter("id_resposta"));
 
-                boolean correta = Boolean.parseBoolean(
+                boolean novoValor = Boolean.parseBoolean(
                         request.getParameter("correta"));
 
-                RespostasDAO daoCurtir = new RespostasDAO();
+                String atualStr = request.getParameter("correta_atual");
 
-                daoCurtir.atualizarCorreta(idResposta, correta);
+                Boolean corretaFinal;
+                if (atualStr != null && !atualStr.equals("null")
+                        && Boolean.parseBoolean(atualStr) == novoValor) {
+                    corretaFinal = null;
+                } else {
+                    corretaFinal = novoValor;
+                }
+
+                RespostasDAO daoCurtir = new RespostasDAO();
+                daoCurtir.atualizarCorreta(idResposta, corretaFinal);
 
                 int idPerg = Integer.parseInt(
                         request.getParameter("id_pergunta"));
 
                 response.sendRedirect(
-                        "exibir_resposta.jsp?id_pergunta=" + idPerg);
+                        "RespostasController?op=2&id_pergunta=" + idPerg);
 
                 break;
         }

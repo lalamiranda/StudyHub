@@ -13,7 +13,7 @@ public class Conexao {
     private Connection con;
     
     public Conexao(){
-        bd = "jdbc:mysql://localhost:3306/studyhub";
+        bd = "jdbc:mysql://localhost:3306/studyhub?useUnicode=true&characterEncoding=UTF-8&useSSL=false";
         usuario = "root";
         senha = "";
         con = null;

@@ -64,6 +64,7 @@
                             + request.getAttribute("id_pergunta") + "'>");
 
                     out.print("<input type='hidden' name='correta' value='true'>");
+                    out.print("<input type='hidden' name='correta_atual' value='" + r.getCorreta() + "'>");
 
                     out.print("<button type='submit'>👍 Gostei</button>");
 
@@ -83,6 +84,7 @@
                             + request.getAttribute("id_pergunta") + "'>");
 
                     out.print("<input type='hidden' name='correta' value='false'>");
+                    out.print("<input type='hidden' name='correta_atual' value='" + r.getCorreta() + "'>");
 
                     out.print("<button type='submit'>👎 Não gostei</button>");
 

@@ -41,8 +41,22 @@ public class PerguntasController extends HttpServlet {
             pergunta.setDescricao(
                     request.getParameter("descricao"));
 
-            pergunta.setIdPessoa(1);
+            HttpSession session = request.getSession();
+            VO.Pessoa pessoaLogada = (VO.Pessoa) session.getAttribute("usuarioLogado");
 
+            if (pessoaLogada == null) {
+
+                session.setAttribute("tituloTemp",
+                        request.getParameter("titulo"));
+
+                session.setAttribute("descricaoTemp",
+                        request.getParameter("descricao"));
+
+                response.sendRedirect("login.jsp");
+                return;
+            }
+
+            pergunta.setIdPessoa(pessoaLogada.getIdPessoa());
             dao.inserir(pergunta);
 
             response.sendRedirect(

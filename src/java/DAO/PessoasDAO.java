@@ -59,7 +59,7 @@ public class PessoasDAO {
         PreparedStatement ps; // estrutura o sql
         ResultSet rs; //armazenará o resultado do bd
         try {
-            String sql = "select cpf,nome from pessoa";
+            String sql = "select nome, email, papel, status, reputacao, data_cadastro from pessoa";
             ps = conexao.conectar().prepareStatement(sql);
             rs = ps.executeQuery(); // executa o sql no banco e retorna o resultado
             ArrayList<Pessoa> lista = new ArrayList<>();
@@ -68,13 +68,13 @@ public class PessoasDAO {
                 //setar os valores dentro de um objeto (Pessoa)
                 //adicionar este objeto a uma list
                 p.setNome(rs.getString("nome"));
-                p.setCpf(rs.getString("cpf"));
+                p.setEmail(rs.getString("email"));
                 p.setReputacao(rs.getInt("reputacao"));
                 p.setPapel(rs.getString("papel"));
                 p.setStatus(rs.getString("status"));
                 p.setDataCadastro(rs.getString("data_cadastro"));
                 lista.add(p);
-            }     
+            }
             return lista;
         } catch (SQLException erro) {
             System.err.print("Exceção gerada ao tentar buscar os dados: " + erro.getMessage());
@@ -83,53 +83,41 @@ public class PessoasDAO {
             conexao.desconectar();
         }
     }
-    
-    public Pessoa login(String email, String senha) {
 
-    PreparedStatement ps;
+    public Pessoa login(String email, String senhaDigitada) {
+        PreparedStatement ps;
+        ResultSet rs;
+        try {
+            String sql = "SELECT * FROM pessoa WHERE email = ? AND status = 'ATIVO'";
 
-    ResultSet rs;
+            ps = conexao.conectar().prepareStatement(sql);
+            ps.setString(1, email);
 
-    try {
+            rs = ps.executeQuery();
 
-        String sql = """
-            SELECT * FROM pessoa
-            WHERE email = ?
-            AND senha = ?
-        """;
+            if (rs.next()) {
+                String hashSalvo = rs.getString("senha");
 
-        ps = conexao.conectar()
-                .prepareStatement(sql);
+                // Verifica BCrypt corretamente
+                if (SenhaUtil.verificarSenha(senhaDigitada, hashSalvo)) {
+                    Pessoa p = new Pessoa();
+                    p.setIdPessoa(rs.getInt("id_pessoa"));
+                    p.setNome(rs.getString("nome"));
+                    p.setEmail(rs.getString("email"));
+                    p.setPapel(rs.getString("papel"));
+                    p.setStatus(rs.getString("status"));
+                    p.setReputacao(rs.getInt("reputacao"));
+                    return p;
+                }
+            }
 
-        ps.setString(1, email);
-        ps.setString(2, senha);
+            return null;
 
-        rs = ps.executeQuery();
-
-        if(rs.next()) {
-
-            Pessoa p = new Pessoa();
-
-            p.setIdPessoa(
-                    rs.getInt("id_pessoa"));
-
-            p.setNome(
-                    rs.getString("nome"));
-
-            return p;
+        } catch (SQLException e) {
+            System.out.println("Erro no login: " + e.getMessage());
+            return null;
+        } finally {
+            conexao.desconectar();
         }
-
-        return null;
-
-    } catch(SQLException e) {
-
-        System.out.println(e);
-
-        return null;
-
-    } finally {
-
-        conexao.desconectar();
     }
-}
 }

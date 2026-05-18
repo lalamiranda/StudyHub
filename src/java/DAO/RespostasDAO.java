@@ -33,8 +33,11 @@ public class RespostasDAO {
             ps.setInt(1, resposta.getIdPergunta());
             ps.setInt(2, resposta.getIdUsuario());
             ps.setString(3, resposta.getResposta());
-            ps.setBoolean(4, resposta.isCorreta());
-
+            if (resposta.getCorreta() == null) {
+                ps.setNull(4, java.sql.Types.BOOLEAN);
+            } else {
+                ps.setBoolean(4, resposta.getCorreta());
+            }
             ps.execute();
 
             return true;
@@ -75,7 +78,13 @@ public class RespostasDAO {
                 r.setIdPergunta(rs.getInt("id_pergunta"));
                 r.setIdUsuario(rs.getInt("id_usuario"));
                 r.setResposta(rs.getString("resposta"));
-                r.setCorreta(rs.getBoolean("correta"));
+                boolean valor = rs.getBoolean("correta");
+
+                if (rs.wasNull()) {
+                    r.setCorreta(null);
+                } else {
+                    r.setCorreta(valor);
+                }
                 r.setDataPostagem(rs.getDate("data_postagem"));
 
                 lista.add(r);
@@ -88,6 +97,33 @@ public class RespostasDAO {
             System.out.println("Erro ao listar: " + e);
 
             return null;
+
+        } finally {
+
+            conexao.desconectar();
+        }
+    }
+
+    public void atualizarCorreta(int idResposta, boolean correta) {
+
+        PreparedStatement ps;
+
+        String sql = "UPDATE respostas SET correta=? WHERE id_resposta=?";
+
+        try {
+
+            ps = conexao.conectar().prepareStatement(sql);
+
+            ps.setBoolean(1, correta);
+            ps.setInt(2, idResposta);
+
+            ps.executeUpdate();
+
+            System.out.println("Resposta atualizada!");
+
+        } catch (Exception e) {
+
+            e.printStackTrace();
 
         } finally {
 

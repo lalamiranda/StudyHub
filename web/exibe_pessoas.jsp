@@ -19,8 +19,10 @@
                     Pessoa p = new Pessoa();
                     p = (Pessoa) pessoas.get(cont);
                     out.print("<tr>");
-                    out.print("<td>" + p.getCpf() + "</td>");
-                    out.print("<td>" + p.getNome()+ "</td>"); 
+                    out.print("<td>" + p.getNome() + "</td>");
+                    out.print("<td>" + p.getEmail() + "</td>");
+                    out.print("<td>" + p.getPapel() + "</td>");
+                    out.print("<td>" + p.getStatus() + "</td>");
                     out.print("</tr>");
                 }
                 out.print("</table>");

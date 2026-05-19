@@ -2,12 +2,17 @@ package Controller;
 
 import DAO.PessoasDAO;
 import DAO.PerguntasDAO;
+import DAO.RespostasDAO;
+
 import VO.Pessoa;
 import VO.Pergunta;
+import VO.Resposta;
 
 import java.io.IOException;
+
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
+
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -23,45 +28,106 @@ public class LoginController extends HttpServlet {
         String senha = request.getParameter("senha");
 
         PessoasDAO dao = new PessoasDAO();
+
         Pessoa pessoa = dao.login(email, senha);
 
         if (pessoa != null) {
+
             HttpSession session = request.getSession();
+
             session.setAttribute("usuarioLogado", pessoa);
-            String tituloTemp = (String) session.getAttribute("tituloTemp");
-            String descricaoTemp = (String) session.getAttribute("descricaoTemp");
+
+
+            String tituloTemp =
+                    (String) session.getAttribute("tituloTemp");
+
+            String descricaoTemp =
+                    (String) session.getAttribute("descricaoTemp");
 
             if (tituloTemp != null && descricaoTemp != null) {
 
                 Pergunta pergunta = new Pergunta();
 
                 pergunta.setTitulo(tituloTemp);
-                pergunta.setDescricao(descricaoTemp);
-                pergunta.setIdPessoa(pessoa.getIdPessoa());
 
-                PerguntasDAO perguntasDAO = new PerguntasDAO();
+                pergunta.setDescricao(descricaoTemp);
+
+                pergunta.setIdPessoa(
+                        pessoa.getIdPessoa());
+
+                PerguntasDAO perguntasDAO =
+                        new PerguntasDAO();
+
                 perguntasDAO.inserir(pergunta);
 
                 session.removeAttribute("tituloTemp");
+
                 session.removeAttribute("descricaoTemp");
             }
 
+
+            String respostaTemp =
+                    (String) session.getAttribute("respostaTemp");
+
+            String idPerguntaTemp =
+                    (String) session.getAttribute("idPerguntaTemp");
+
+            if (respostaTemp != null && idPerguntaTemp != null) {
+
+                Resposta resposta = new Resposta();
+
+                resposta.setResposta(respostaTemp);
+
+                resposta.setIdPergunta(
+                        Integer.parseInt(idPerguntaTemp));
+
+                resposta.setIdUsuario(
+                        pessoa.getIdPessoa());
+
+                resposta.setCorreta(null);
+
+                RespostasDAO respostasDAO =
+                        new RespostasDAO();
+
+                respostasDAO.inserir(resposta);
+
+                session.removeAttribute("respostaTemp");
+
+                session.removeAttribute("idPerguntaTemp");
+            }
+
             response.sendRedirect("PerguntasController?op=2");
+
         } else {
-            request.setAttribute("erro", "Email ou senha inválidos.");
-            request.getRequestDispatcher("login.jsp").forward(request, response);
+
+            request.setAttribute(
+                    "erro",
+                    "Email ou senha inválidos.");
+
+            request.getRequestDispatcher("login.jsp")
+                    .forward(request, response);
         }
     }
 
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+    protected void doGet(HttpServletRequest request,
+            HttpServletResponse response)
             throws ServletException, IOException {
+
         processRequest(request, response);
     }
 
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+    protected void doPost(HttpServletRequest request,
+            HttpServletResponse response)
             throws ServletException, IOException {
+
         processRequest(request, response);
+    }
+
+    @Override
+    public String getServletInfo() {
+
+        return "Short description";
     }
 }

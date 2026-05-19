@@ -22,7 +22,7 @@
         <input type="password" name="senha" required><br><br>
 
         <button type="submit">Entrar</button>
-
+        <a href="index.html">Página inicial</a>
     </form>
 
 </body>

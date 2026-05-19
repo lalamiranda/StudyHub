@@ -67,10 +67,14 @@
                         <input type="submit" value="Cadastrar">
                     </td>
                 </tr>
-
+                <tr>
+                    <td colspan="2" align="center">
+                        <a href="index.html">Página inicial</a>
+                    </td>
+                </tr>
             </table>
 
         </form>
-
+        
     </body>
 </html>

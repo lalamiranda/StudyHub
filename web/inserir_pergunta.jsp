@@ -41,6 +41,8 @@
         </button>
 
     </form>
+    <br><br>
+    <a href="index.html">Página inicial</a>
 
 </body>
 </html>

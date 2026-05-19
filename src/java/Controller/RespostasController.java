@@ -1,6 +1,7 @@
 package Controller;
 
 import DAO.RespostasDAO;
+import VO.Pessoa;
 import VO.Resposta;
 
 import java.io.IOException;
@@ -9,6 +10,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 @WebServlet(name = "RespostasController", urlPatterns = {"/RespostasController"})
 public class RespostasController extends HttpServlet {
@@ -25,12 +27,32 @@ public class RespostasController extends HttpServlet {
         switch (op) {
 
             case "1":
+
+                HttpSession session = request.getSession();
+
+                Pessoa usuario = (Pessoa) session.getAttribute("usuarioLogado");
+
+                if (usuario == null) {
+
+                    session.setAttribute(
+                            "respostaTemp",
+                            request.getParameter("resposta"));
+
+                    session.setAttribute(
+                            "idPerguntaTemp",
+                            request.getParameter("id_pergunta"));
+
+                    response.sendRedirect("login.jsp");
+
+                    return;
+                }
+
                 Resposta resposta = new Resposta();
 
                 resposta.setIdPergunta(
                         Integer.parseInt(request.getParameter("id_pergunta")));
 
-                resposta.setIdUsuario(9);
+                resposta.setIdUsuario(usuario.getIdPessoa());
 
                 resposta.setResposta(
                         request.getParameter("resposta"));
@@ -38,10 +60,13 @@ public class RespostasController extends HttpServlet {
                 resposta.setCorreta(null);
 
                 RespostasDAO dao = new RespostasDAO();
+
                 dao.inserir(resposta);
 
-                response.sendRedirect("RespostasController?op=2&id_pergunta="
+                response.sendRedirect(
+                        "RespostasController?op=2&id_pergunta="
                         + resposta.getIdPergunta());
+
                 break;
 
             case "2":

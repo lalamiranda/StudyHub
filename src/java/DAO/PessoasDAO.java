@@ -19,14 +19,15 @@ public class PessoasDAO {
     public boolean inserir(Pessoa p) {
         try {
             String hashSenha = SenhaUtil.hashSenha(p.getSenha());
-            String sql = "insert into pessoa (nome, cpf, email, papel, senha) values (?,?,?,?,?)";
+            String sql = "insert into pessoa (nome, cpf, email, papel, sexo, senha) values (?,?,?,?,?, ?)";
             PreparedStatement ps;
             ps = conexao.conectar().prepareStatement(sql);
             ps.setString(1, p.getNome());
             ps.setString(2, p.getCpf());
             ps.setString(3, p.getEmail());
             ps.setString(4, p.getPapel());
-            ps.setString(5, hashSenha);
+            ps.setString(5, p.getSexo());
+            ps.setString(6, hashSenha);
             return ps.executeUpdate() != 0;
         } catch (SQLException erro) {
             System.out.println("Exceção causada na inserção");
@@ -59,7 +60,7 @@ public class PessoasDAO {
         PreparedStatement ps; // estrutura o sql
         ResultSet rs; //armazenará o resultado do bd
         try {
-            String sql = "select nome, email, papel, status, reputacao, data_cadastro from pessoa";
+            String sql = "select nome, email, papel, sexo, status, reputacao, data_cadastro from pessoa";
             ps = conexao.conectar().prepareStatement(sql);
             rs = ps.executeQuery(); // executa o sql no banco e retorna o resultado
             ArrayList<Pessoa> lista = new ArrayList<>();
@@ -71,6 +72,7 @@ public class PessoasDAO {
                 p.setEmail(rs.getString("email"));
                 p.setReputacao(rs.getInt("reputacao"));
                 p.setPapel(rs.getString("papel"));
+                p.setSexo(rs.getString("sexo"));
                 p.setStatus(rs.getString("status"));
                 p.setDataCadastro(rs.getString("data_cadastro"));
                 lista.add(p);
@@ -105,6 +107,7 @@ public class PessoasDAO {
                     p.setNome(rs.getString("nome"));
                     p.setEmail(rs.getString("email"));
                     p.setPapel(rs.getString("papel"));
+                    p.setSexo(rs.getString("sexo"));
                     p.setStatus(rs.getString("status"));
                     p.setReputacao(rs.getInt("reputacao"));
                     return p;

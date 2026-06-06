@@ -1,10 +1,5 @@
 package Controller;
 
-import DAO.PerguntasDAO;
-import VO.Pergunta;
-import VO.Pessoa;
-import DAO.TagsDAO;
-
 import java.io.IOException;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -13,63 +8,23 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-@WebServlet(name = "PerguntasController", urlPatterns = {"/PerguntasController"})
-public class PerguntasController extends HttpServlet {
+/**
+ *
+ * @author lavin
+ */
+@WebServlet(name = "LogoutController", urlPatterns = {"/LogoutController"})
+public class LogoutController extends HttpServlet {
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+
         HttpSession session = request.getSession(false);
 
-        if (session == null || session.getAttribute("usuarioLogado") == null) {
-            response.sendRedirect("login.jsp");
-            return;
+        if (session != null) {
+            session.invalidate();
         }
 
-        String op = request.getParameter("op");
-
-        PerguntasDAO dao = new PerguntasDAO();
-
-        if (op != null && op.equals("2")) {
-
-            String idTagParam = request.getParameter("id_tag");
-
-            if (idTagParam != null && !idTagParam.isEmpty()) {
-                int idTag = Integer.parseInt(idTagParam);
-
-                request.setAttribute("lista", dao.listarPorTag(idTag));
-            } else {
-                request.setAttribute("lista", dao.listar());
-            }
-
-            request.getRequestDispatcher("exibe_perguntas.jsp")
-                    .forward(request, response);
-
-        } else {
-
-            Pergunta pergunta = new Pergunta();
-
-            pergunta.setTitulo(
-                    request.getParameter("titulo"));
-
-            pergunta.setDescricao(
-                    request.getParameter("descricao"));
-
-            Pessoa pessoaLogada
-                    = (Pessoa) session.getAttribute("usuarioLogado");
-
-            pergunta.setIdPessoa(pessoaLogada.getIdPessoa());
-            int idPergunta = dao.inserir(pergunta);
-
-            if (idPergunta > 0) {
-                String[] tagsSelecionadas = request.getParameterValues("tags");
-
-                TagsDAO tagsDAO = new TagsDAO();
-                tagsDAO.salvarTagsDaPergunta(idPergunta, tagsSelecionadas);
-            }
-
-            response.sendRedirect(
-                    "PerguntasController?op=2");
-        }
+        response.sendRedirect("login.jsp");
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">

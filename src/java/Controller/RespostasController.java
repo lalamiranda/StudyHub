@@ -17,6 +17,12 @@ public class RespostasController extends HttpServlet {
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        HttpSession session = request.getSession(false);
+
+        if (session == null || session.getAttribute("usuarioLogado") == null) {
+            response.sendRedirect("login.jsp");
+            return;
+        }
 
         String op = request.getParameter("op");
 
@@ -28,24 +34,7 @@ public class RespostasController extends HttpServlet {
 
             case "1":
 
-                HttpSession session = request.getSession();
-
                 Pessoa usuario = (Pessoa) session.getAttribute("usuarioLogado");
-
-                if (usuario == null) {
-
-                    session.setAttribute(
-                            "respostaTemp",
-                            request.getParameter("resposta"));
-
-                    session.setAttribute(
-                            "idPerguntaTemp",
-                            request.getParameter("id_pergunta"));
-
-                    response.sendRedirect("login.jsp");
-
-                    return;
-                }
 
                 Resposta resposta = new Resposta();
 
@@ -88,24 +77,19 @@ public class RespostasController extends HttpServlet {
                 int idResposta = Integer.parseInt(
                         request.getParameter("id_resposta"));
 
-                boolean novoValor = Boolean.parseBoolean(
-                        request.getParameter("correta"));
-
-                String atualStr = request.getParameter("correta_atual");
-
-                Boolean corretaFinal;
-                if (atualStr != null && !atualStr.equals("null")
-                        && Boolean.parseBoolean(atualStr) == novoValor) {
-                    corretaFinal = null;
-                } else {
-                    corretaFinal = novoValor;
-                }
-
-                RespostasDAO daoCurtir = new RespostasDAO();
-                daoCurtir.atualizarCorreta(idResposta, corretaFinal);
-
                 int idPerg = Integer.parseInt(
                         request.getParameter("id_pergunta"));
+
+                String tipo = request.getParameter("tipo");
+
+                Pessoa usuarioVoto = (Pessoa) session.getAttribute("usuarioLogado");
+
+                RespostasDAO daoCurtir = new RespostasDAO();
+
+                daoCurtir.votarResposta(
+                        idResposta,
+                        usuarioVoto.getIdPessoa(),
+                        tipo);
 
                 response.sendRedirect(
                         "RespostasController?op=2&id_pergunta=" + idPerg);

@@ -12,6 +12,15 @@ public class Pessoa {
     private String papel;
     private String status;
     private String dataCadastro;
+    private String sexo;
+    
+    public String getSexo() {
+        return sexo;
+    }
+
+    public void setSexo(String sexo) {
+        this.sexo = sexo;
+    }
 
     public int getIdPessoa() {
         return idPessoa;

@@ -1,3 +1,14 @@
+<%@page import="VO.Pessoa"%>
+
+<%
+    Pessoa usuarioLogado = (Pessoa) session.getAttribute("usuarioLogado");
+
+    if (usuarioLogado == null) {
+        response.sendRedirect("login.jsp");
+        return;
+    }
+%>
+
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 
 <!DOCTYPE html>
@@ -13,8 +24,8 @@
     <form action="RespostasController" method="post">
 
         <input type="hidden"
-               name="id_pergunta"
-               value="${param.id_pergunta}">
+       name="id_pergunta"
+       value="<%= request.getParameter("id_pergunta") %>">
 
         <input type="hidden"
                name="op"
@@ -35,6 +46,6 @@
         </button>
 
     </form>
-    <a href="index.html">Página inicial</a>
+    <a href="index.jsp">Página inicial</a>
 </body>
 </html>

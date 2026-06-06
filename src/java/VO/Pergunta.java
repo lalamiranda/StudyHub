@@ -10,6 +10,24 @@ public class Pergunta {
     private Date dataPostagem;
     private int visualizacoes;
     private boolean resolvida;
+    private String nomePessoa;
+
+    public String getNomePessoa() {
+        return nomePessoa;
+    }
+
+    public void setNomePessoa(String nomePessoa) {
+        this.nomePessoa = nomePessoa;
+    }
+    private String tags;
+
+    public String getTags() {
+        return tags;
+    }
+
+    public void setTags(String tags) {
+        this.tags = tags;
+    }
 
     public int getIdPergunta() {
         return idPergunta;

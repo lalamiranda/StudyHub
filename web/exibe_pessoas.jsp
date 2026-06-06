@@ -1,3 +1,14 @@
+<%@page import="VO.Pessoa"%>
+
+<%
+    Pessoa usuarioLogado = (Pessoa) session.getAttribute("usuarioLogado");
+
+    if (usuarioLogado == null) {
+        response.sendRedirect("login.jsp");
+        return;
+    }
+%>
+
 <%@page import="java.util.List"%>
 <%@page import="VO.Pessoa"%>
 
@@ -31,7 +42,7 @@
         
         
         <br><br><br>
-    <center><a href="index.html">Página inicial</a></center>
+    <center><a href="index.jsp">Página inicial</a></center>
 
     </body>
 </html>

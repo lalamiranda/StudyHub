@@ -1,12 +1,7 @@
 package Controller;
 
 import DAO.PessoasDAO;
-import DAO.PerguntasDAO;
-import DAO.RespostasDAO;
-
 import VO.Pessoa;
-import VO.Pergunta;
-import VO.Resposta;
 
 import java.io.IOException;
 
@@ -37,66 +32,7 @@ public class LoginController extends HttpServlet {
 
             session.setAttribute("usuarioLogado", pessoa);
 
-
-            String tituloTemp =
-                    (String) session.getAttribute("tituloTemp");
-
-            String descricaoTemp =
-                    (String) session.getAttribute("descricaoTemp");
-
-            if (tituloTemp != null && descricaoTemp != null) {
-
-                Pergunta pergunta = new Pergunta();
-
-                pergunta.setTitulo(tituloTemp);
-
-                pergunta.setDescricao(descricaoTemp);
-
-                pergunta.setIdPessoa(
-                        pessoa.getIdPessoa());
-
-                PerguntasDAO perguntasDAO =
-                        new PerguntasDAO();
-
-                perguntasDAO.inserir(pergunta);
-
-                session.removeAttribute("tituloTemp");
-
-                session.removeAttribute("descricaoTemp");
-            }
-
-
-            String respostaTemp =
-                    (String) session.getAttribute("respostaTemp");
-
-            String idPerguntaTemp =
-                    (String) session.getAttribute("idPerguntaTemp");
-
-            if (respostaTemp != null && idPerguntaTemp != null) {
-
-                Resposta resposta = new Resposta();
-
-                resposta.setResposta(respostaTemp);
-
-                resposta.setIdPergunta(
-                        Integer.parseInt(idPerguntaTemp));
-
-                resposta.setIdUsuario(
-                        pessoa.getIdPessoa());
-
-                resposta.setCorreta(null);
-
-                RespostasDAO respostasDAO =
-                        new RespostasDAO();
-
-                respostasDAO.inserir(resposta);
-
-                session.removeAttribute("respostaTemp");
-
-                session.removeAttribute("idPerguntaTemp");
-            }
-
-            response.sendRedirect("PerguntasController?op=2");
+            response.sendRedirect("index.jsp");
 
         } else {
 

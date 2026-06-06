@@ -9,6 +9,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 /**
  *
@@ -18,6 +19,13 @@ public class PessoasController extends HttpServlet {
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        
+        HttpSession session = request.getSession(false);
+
+        if (session == null || session.getAttribute("usuarioLogado") == null) {
+            response.sendRedirect("login.jsp");
+            return;
+        }
 
         int operacao = Integer.parseInt(request.getParameter("op"));
         PessoasDAO p = new PessoasDAO();
@@ -37,6 +45,7 @@ public class PessoasController extends HttpServlet {
                 pes.setNome(request.getParameter("nome"));
                 pes.setEmail(request.getParameter("email"));
                 pes.setPapel(request.getParameter("papel"));
+                pes.setSexo(request.getParameter("sexo"));
                 pes.setSenha(request.getParameter("senha"));
                 response.sendRedirect("exibe_resultado.jsp?result=" + p.inserir(pes));
             }

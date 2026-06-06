@@ -1,3 +1,14 @@
+<%@page import="VO.Pessoa"%>
+
+<%
+    Pessoa usuarioLogado = (Pessoa) session.getAttribute("usuarioLogado");
+
+    if (usuarioLogado == null) {
+        response.sendRedirect("login.jsp");
+        return;
+    }
+%>
+
 <%@page import="VO.Resposta"%>
 <%@page import="java.util.List"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
@@ -19,23 +30,30 @@
 
                 out.print("<center>Encontradas: " + respostas.size() + "</center><br><br>");
 
-                out.print("<table width='60%' border='1' cellspacing='0' align='center'>");
+                out.print("<table width='80%' border='1' cellspacing='0' align='center'>");
 
                 out.print("<tr>");
                 out.print("<th>Resposta</th>");
-                out.print("<th>Status</th>");
+                out.print("<th>Autor</th>");
+                out.print("<th>Data</th>");
+                out.print("<th>Votos</th>");
                 out.print("<th>Ações</th>");
                 out.print("</tr>");
-
-                for (int i = 0; i < respostas.size(); i++) {
-
-                    Resposta r = (Resposta) respostas.get(i);
+                for (int cont = 0; cont < respostas.size(); cont++) {
+                    Resposta r = (Resposta) respostas.get(cont);
 
                     out.print("<tr>");
 
-                    // RESPOSTA
                     out.print("<td>" + r.getResposta() + "</td>");
 
+                    if (r.getNomePessoa() != null) {
+                        out.print("<td>" + r.getNomePessoa() + "</td>");
+                    } else {
+                        out.print("<td>Usuário não encontrado</td>");
+                    }
+
+                    out.print("<td>" + r.getDataPostagem() + "</td>");
+                    out.print("<td align='center'>👍 " + r.getQuantidadeGostei() + " | 👎 " + r.getQuantidadeNaoGostei() + "</td>");
                     // STATUS
                     String status = "";
 
@@ -57,14 +75,13 @@
 
                     out.print("<input type='hidden' name='op' value='3'>");
 
-                    out.print("<input type='hidden' name='id_resposta' value='" 
+                    out.print("<input type='hidden' name='id_resposta' value='"
                             + r.getIdResposta() + "'>");
 
-                    out.print("<input type='hidden' name='id_pergunta' value='" 
+                    out.print("<input type='hidden' name='id_pergunta' value='"
                             + request.getAttribute("id_pergunta") + "'>");
 
-                    out.print("<input type='hidden' name='correta' value='true'>");
-                    out.print("<input type='hidden' name='correta_atual' value='" + r.getCorreta() + "'>");
+                    out.print("<input type='hidden' name='tipo' value='GOSTEI'>");
 
                     out.print("<button type='submit'>👍 Gostei</button>");
 
@@ -77,14 +94,13 @@
 
                     out.print("<input type='hidden' name='op' value='3'>");
 
-                    out.print("<input type='hidden' name='id_resposta' value='" 
+                    out.print("<input type='hidden' name='id_resposta' value='"
                             + r.getIdResposta() + "'>");
 
-                    out.print("<input type='hidden' name='id_pergunta' value='" 
+                    out.print("<input type='hidden' name='id_pergunta' value='"
                             + request.getAttribute("id_pergunta") + "'>");
 
-                    out.print("<input type='hidden' name='correta' value='false'>");
-                    out.print("<input type='hidden' name='correta_atual' value='" + r.getCorreta() + "'>");
+                    out.print("<input type='hidden' name='tipo' value='NAO_GOSTEI'>");
 
                     out.print("<button type='submit'>👎 Não gostei</button>");
 
@@ -98,32 +114,31 @@
                 out.print("</table>");
 
             } else {
-
                 out.print("<center>Nenhuma resposta ainda.</center>");
             }
         %>
 
         <br><br>
 
-        <center>
+    <center>
 
-            <a href="inserir_resposta.jsp?id_pergunta=${param.id_pergunta}">
-                Responder esta pergunta
-            </a>
+        <a href="inserir_resposta.jsp?id_pergunta=<%= request.getAttribute("id_pergunta")%>">
+            Responder esta pergunta
+        </a>
 
-            <br><br>
+        <br><br>
 
-            <a href="PerguntasController?op=2">
-                Voltar para perguntas
-            </a>
+        <a href="PerguntasController?op=2">
+            Voltar para perguntas
+        </a>
 
-            <br><br>
+        <br><br>
 
-            <a href="index.html">
-                Página inicial
-            </a>
+        <a href="index.jsp">
+            Página inicial
+        </a>
 
-        </center>
+    </center>
 
-    </body>
+</body>
 </html>

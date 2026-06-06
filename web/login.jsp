@@ -22,7 +22,8 @@
         <input type="password" name="senha" required><br><br>
 
         <button type="submit">Entrar</button>
-        <a href="index.html">Página inicial</a>
+        <br><br>
+        <a href="index.jsp">Página inicial</a>
     </form>
 
 </body>

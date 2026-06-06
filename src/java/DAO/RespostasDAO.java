@@ -33,6 +33,7 @@ public class RespostasDAO {
             ps.setInt(1, resposta.getIdPergunta());
             ps.setInt(2, resposta.getIdUsuario());
             ps.setString(3, resposta.getResposta());
+
             if (resposta.getCorreta() == null) {
                 ps.setNull(4, java.sql.Types.BOOLEAN);
             } else {
@@ -61,7 +62,36 @@ public class RespostasDAO {
 
         try {
 
-            String sql = "SELECT * FROM respostas WHERE id_pergunta = ?";
+            String sql = """
+                SELECT 
+                    r.id_resposta,
+                    r.id_pergunta,
+                    r.id_usuario,
+                    r.resposta,
+                    r.correta,
+                    r.data_postagem,
+                    p.nome AS nome_pessoa,
+
+                    SUM(CASE WHEN rv.tipo = 'GOSTEI' THEN 1 ELSE 0 END) AS qtd_gostei,
+                    SUM(CASE WHEN rv.tipo = 'NAO_GOSTEI' THEN 1 ELSE 0 END) AS qtd_nao_gostei
+
+                FROM respostas r
+                LEFT JOIN pessoa p ON r.id_usuario = p.id_pessoa
+                LEFT JOIN resposta_votos rv ON r.id_resposta = rv.id_resposta
+
+                WHERE r.id_pergunta = ?
+
+                GROUP BY 
+                    r.id_resposta,
+                    r.id_pergunta,
+                    r.id_usuario,
+                    r.resposta,
+                    r.correta,
+                    r.data_postagem,
+                    p.nome
+
+                ORDER BY r.data_postagem ASC
+            """;
 
             ps = conexao.conectar().prepareStatement(sql);
             ps.setInt(1, idPergunta);
@@ -78,14 +108,19 @@ public class RespostasDAO {
                 r.setIdPergunta(rs.getInt("id_pergunta"));
                 r.setIdUsuario(rs.getInt("id_usuario"));
                 r.setResposta(rs.getString("resposta"));
-                boolean valor = rs.getBoolean("correta");
+                r.setCorreta(rs.getBoolean("correta"));
+                r.setDataPostagem(rs.getTimestamp("data_postagem"));
+                r.setNomePessoa(rs.getString("nome_pessoa"));
+
+                Boolean valor = rs.getBoolean("correta");
 
                 if (rs.wasNull()) {
                     r.setCorreta(null);
                 } else {
                     r.setCorreta(valor);
                 }
-                r.setDataPostagem(rs.getDate("data_postagem"));
+                r.setQuantidadeGostei(rs.getInt("qtd_gostei"));
+                r.setQuantidadeNaoGostei(rs.getInt("qtd_nao_gostei"));
 
                 lista.add(r);
             }
@@ -128,6 +163,40 @@ public class RespostasDAO {
         } catch (Exception e) {
 
             e.printStackTrace();
+
+        } finally {
+
+            conexao.desconectar();
+        }
+    }
+
+    public boolean votarResposta(int idResposta, int idUsuario, String tipo) {
+
+        PreparedStatement ps;
+
+        try {
+
+            String sql = """
+            INSERT INTO resposta_votos
+            (id_resposta, id_usuario, tipo)
+            VALUES (?, ?, ?)
+            ON DUPLICATE KEY UPDATE
+            tipo = VALUES(tipo),
+            data_voto = CURRENT_TIMESTAMP
+        """;
+
+            ps = conexao.conectar().prepareStatement(sql);
+
+            ps.setInt(1, idResposta);
+            ps.setInt(2, idUsuario);
+            ps.setString(3, tipo);
+
+            return ps.executeUpdate() != 0;
+
+        } catch (SQLException e) {
+
+            System.out.println("Erro ao votar na resposta: " + e.getMessage());
+            return false;
 
         } finally {
 

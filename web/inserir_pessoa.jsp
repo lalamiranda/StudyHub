@@ -4,24 +4,6 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <title>Cadastrar Usuário</title>
-
-        <style>
-            body{
-                text-align: center;
-            }
-
-            form{
-                display: inline-block;
-            }
-
-            table{
-                text-align: left;
-            }
-
-            td{
-                padding: 8px;
-            }
-        </style>
     </head>
 
     <body>
@@ -33,22 +15,41 @@
             <table>
 
                 <tr>
-                    <td>Nome</td>
-                    <td><input type="text" name="nome"></td>
+                    <td>Nome:</td>
+                    <td>
+                        <input type="text" name="nome">
+                    </td>
                 </tr>
 
                 <tr>
-                    <td>CPF</td>
-                    <td><input type="text" name="cpf"></td>
+                    <td>CPF:</td>
+                    <td>
+                        <input type="text" name="cpf">
+                    </td>
                 </tr>
 
                 <tr>
-                    <td>E-mail</td>
-                    <td><input type="text" name="email"></td>
+                    <td>E-mail:</td>
+                    <td>
+                        <input type="text" name="email">
+                    </td>
                 </tr>
 
                 <tr>
-                    <td>Tipo de perfil</td>
+                    <td>Sexo:</td>
+                    <td>
+                        <input type="radio" name="sexo" value="feminino" checked> Feminino
+                        <br>
+                        <input type="radio" name="sexo" value="masculino"> Masculino
+                        <br>
+                        <input type="radio" name="sexo" value="outro"> Outro
+                        <br>
+                        <input type="radio" name="sexo" value="naoInformado"> Prefiro não dizer
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>Tipo de perfil:</td>
                     <td>
                         <select name="papel">
                             <option value="ALUNO">Aluno</option>
@@ -58,8 +59,10 @@
                 </tr>
 
                 <tr>
-                    <td>Senha</td>
-                    <td><input type="password" name="senha"></td>
+                    <td>Senha:</td>
+                    <td>
+                        <input type="password" name="senha">
+                    </td>
                 </tr>
 
                 <tr>
@@ -67,14 +70,16 @@
                         <input type="submit" value="Cadastrar">
                     </td>
                 </tr>
+
                 <tr>
                     <td colspan="2" align="center">
-                        <a href="index.html">Página inicial</a>
+                        <a href="index.jsp">Página inicial</a>
                     </td>
                 </tr>
+
             </table>
 
         </form>
-        
+
     </body>
 </html>

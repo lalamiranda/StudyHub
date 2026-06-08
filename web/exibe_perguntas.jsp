@@ -1,9 +1,10 @@
-<%@page import="VO.Pessoa"%>
-<%@page import="DAO.TagsDAO"%>
-<%@page import="VO.Tag"%>
+<%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@page import="java.util.List"%>
 <%@page import="java.util.ArrayList"%>
 <%@page import="VO.Pergunta"%>
-<%@page import="java.util.List"%>
+<%@page import="VO.Tag"%>
+<%@page import="VO.Pessoa"%>
+<%@page import="DAO.TagsDAO"%>
 
 <%
     Pessoa usuarioLogado = (Pessoa) session.getAttribute("usuarioLogado");
@@ -12,86 +13,121 @@
         response.sendRedirect("login.jsp");
         return;
     }
-%>
 
-<%
     TagsDAO tagsDAO = new TagsDAO();
     ArrayList<Tag> tagsFiltro = tagsDAO.listar();
+
+    List perguntas = (List) request.getAttribute("lista");
 %>
 
-<%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
-<html>
-    <head>
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>Listagem</title>
-    </head>
-    <body>
-    <center>
-        <b>Filtrar por tag:</b>
-        <br><br>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Perguntas - StudyHub</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+</head>
 
-        <a href="PerguntasController?op=2">Todas</a>
+<body>
+    <%@include file="includes/menu.jsp" %>
 
-        <%
-            if (tagsFiltro != null) {
-                for (Tag tag : tagsFiltro) {
-        %>
-        |
-        <a href="PerguntasController?op=2&id_tag=<%= tag.getIdTag()%>">
-            <%= tag.getNome()%>
-        </a>
-        <%
-                }
-            }
-        %>
-    </center>
+    <div class="container">
+        <!-- Cabeçalho -->
+        <div class="card">
+            <div class="card-body">
+                <h1 class="page-title">Comunidade</h1>
+                <p class="page-subtitle">Veja as dúvidas publicadas por alunos e professores.</p>
 
-    <br><br>
-    <%
-        List perguntas = (List) request.getAttribute("lista");
-        if (perguntas != null) {
-            out.print("<center>Achados: " + perguntas.size() + "</center><br><br><br>");
-            out.print("<table width=\"80%\" border=\"1\" cellspacing=\"0\" align=\"center\">");
+                <div style="display: flex; gap: 1rem; margin-top: 1.5rem; flex-wrap: wrap;">
+                    <a class="btn btn-primary" href="inserir_pergunta.jsp">Fazer nova pergunta</a>
+                    <a class="btn btn-outline" href="index.jsp">Voltar</a>
+                </div>
+            </div>
+        </div>
 
-            out.print("<tr>");
-            out.print("<th>Título</th>");
-            out.print("<th>Descrição</th>");
-            out.print("<th>Autor</th>");
-            out.print("<th>Tags</th>");
-            out.print("<th>Ações</th>");
-            out.print("</tr>");
+        <!-- Filtro -->
+        <div class="card" style="margin-top: 1.5rem;">
+            <div class="card-body">
+                <h3 style="font-size: 1rem; font-weight: 600; margin-bottom: 1rem; color: var(--text); border-left: 3px solid var(--accent); padding-left: 0.75rem;">
+                    Filtrar por tag
+                </h3>
+                <div class="tag-filters">
+                    <a href="PerguntasController?op=2" class="tag-filter active">Todas</a>
+                    <% if (tagsFiltro != null && !tagsFiltro.isEmpty()) { %>
+                        <% for (Tag tag : tagsFiltro) { %>
+                            <a href="PerguntasController?op=2&id_tag=<%= tag.getIdTag() %>" class="tag-filter">
+                                <%= tag.getNome() %>
+                            </a>
+                        <% } %>
+                    <% } %>
+                </div>
+            </div>
+        </div>
 
-            for (int cont = 0; cont < perguntas.size(); cont++) {
-                Pergunta p = new Pergunta();
-                p = (Pergunta) perguntas.get(cont);
+        <!-- Lista questao -->
+        <div class="card" style="margin-top: 1.5rem;">
+            <div class="card-body">
+                <div class="list-header">
+                    <h3 style="font-size: 1rem; font-weight: 600; margin-bottom: 0.5rem; color: var(--text); border-left: 3px solid var(--accent); padding-left: 0.75rem;">
+                        Perguntas cadastradas
+                    </h3>
+                    <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1.5rem;">
+                        <% if (perguntas != null) { %>
+                            Foram encontradas <strong><%= perguntas.size() %></strong> pergunta(s).
+                        <% } else { %>
+                            Nenhuma pergunta foi carregada.
+                        <% } %>
+                    </p>
+                </div>
 
-                out.print("<tr>");
-                out.print("<td>" + p.getTitulo() + "</td>");
-                out.print("<td>" + p.getDescricao() + "</td>");
+                <% if (perguntas == null || perguntas.isEmpty()) { %>
+                    <div class="empty-state">
+                        <p style="font-size: 1rem; color: var(--text-muted);">
+                            Nenhuma pergunta cadastrada até o momento.
+                        </p>
+                        <a class="btn btn-primary" href="inserir_pergunta.jsp" style="margin-top: 1rem;">
+                            Criar primeira pergunta
+                        </a>
+                    </div>
+                <% } else { %>
+                    <div class="question-list">
+                        <%
+                            for (int cont = 0; cont < perguntas.size(); cont++) {
+                                Pergunta p = (Pergunta) perguntas.get(cont);
+                        %>
+                            <div class="q-card">
+                                <h4 class="q-card-title"><%= p.getTitulo() %></h4>
+                                <p class="q-card-body"><%= p.getDescricao() %></p>
+                                <div class="q-card-meta">
+                                    <span>
+                                        Autor: <strong>
+                                            <% if (p.getNomePessoa() != null) { %>
+                                                <%= p.getNomePessoa() %>
+                                            <% } else { %>
+                                                Usuário não encontrado
+                                            <% } %>
+                                        </strong>
+                                    </span>
 
-                if (p.getNomePessoa() != null) {
-                    out.print("<td>" + p.getNomePessoa() + "</td>");
-                } else {
-                    out.print("<td>Usuário não encontrado</td>");
-                }
+                                    <% if (p.getTags() != null && !p.getTags().isEmpty()) { %>
+                                        <span>
+                                            Tags: <%= p.getTags() %>
+                                        </span>
+                                    <% } %>
 
-                if (p.getTags() != null) {
-                    out.print("<td>" + p.getTags() + "</td>");
-                } else {
-                    out.print("<td>Sem tags</td>");
-                }
-
-                out.print("<td><a href='RespostasController?op=2&id_pergunta=" + p.getIdPergunta() + "'>Ver respostas</a></td>");
-                out.print("</tr>");
-            }
-
-            out.print("</table>");
-        }
-    %>
-
-    <br><br><br>
-    <center><a href="index.jsp">Página inicial</a></center>
-
+                                    <a href="RespostasController?op=2&id_pergunta=<%= p.getIdPergunta() %>" style="margin-left: auto; color: var(--accent); text-decoration: none; font-weight: 600;">
+                                        Ver respostas
+                                    </a>
+                                </div>
+                            </div>
+                        <%
+                            }
+                        %>
+                    </div>
+                <% } %>
+            </div>
+        </div>
+    </div>
 </body>
 </html>

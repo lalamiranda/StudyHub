@@ -13,7 +13,15 @@ public class Pessoa {
     private String status;
     private String dataCadastro;
     private String sexo;
+    private String dataNascimento;
     
+    public String getDataNascimento() {
+    return dataNascimento;
+    }
+
+    public void setDataNascimento(String dataNascimento) {
+    this.dataNascimento = dataNascimento;
+    }
     public String getSexo() {
         return sexo;
     }

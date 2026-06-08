@@ -6,6 +6,7 @@ import VO.Pessoa;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Types;
 import java.util.ArrayList;
 
 public class PessoasDAO {
@@ -19,18 +20,33 @@ public class PessoasDAO {
     public boolean inserir(Pessoa p) {
         try {
             String hashSenha = SenhaUtil.hashSenha(p.getSenha());
-            String sql = "insert into pessoa (nome, cpf, email, papel, sexo, senha) values (?,?,?,?,?, ?)";
-            PreparedStatement ps;
-            ps = conexao.conectar().prepareStatement(sql);
+
+            String sql = """
+                INSERT INTO pessoa 
+                (nome, cpf, email, papel, sexo, data_nascimento, senha) 
+                VALUES (?, ?, ?, ?, ?, ?, ?)
+            """;
+
+            PreparedStatement ps = conexao.conectar().prepareStatement(sql);
+
             ps.setString(1, p.getNome());
             ps.setString(2, p.getCpf());
             ps.setString(3, p.getEmail());
             ps.setString(4, p.getPapel());
             ps.setString(5, p.getSexo());
-            ps.setString(6, hashSenha);
+
+            if (p.getDataNascimento() == null || p.getDataNascimento().isEmpty()) {
+                ps.setNull(6, Types.DATE);
+            } else {
+                ps.setString(6, p.getDataNascimento());
+            }
+
+            ps.setString(7, hashSenha);
+
             return ps.executeUpdate() != 0;
+
         } catch (SQLException erro) {
-            System.out.println("Exceção causada na inserção");
+            System.out.println("Exceção causada na inserção: " + erro.getMessage());
             return false;
         } finally {
             conexao.desconectar();
@@ -39,15 +55,20 @@ public class PessoasDAO {
 
     public boolean autenticar(String email, String senhaDigitada) {
         try {
-            String sql = "SELECT senha FROM pessoa WHERE email = ?";
+            String sql = "SELECT senha FROM pessoa WHERE email = ? AND status = 'ATIVO'";
+
             PreparedStatement stmt = conexao.conectar().prepareStatement(sql);
             stmt.setString(1, email);
+
             ResultSet rs = stmt.executeQuery();
+
             if (rs.next()) {
                 String hashSalvo = rs.getString("senha");
                 return SenhaUtil.verificarSenha(senhaDigitada, hashSalvo);
             }
+
             return false;
+
         } catch (SQLException erro) {
             System.out.println("Exceção causada na autenticação: " + erro.getMessage());
             return false;
@@ -57,29 +78,52 @@ public class PessoasDAO {
     }
 
     public ArrayList<Pessoa> listar() {
-        PreparedStatement ps; // estrutura o sql
-        ResultSet rs; //armazenará o resultado do bd
+        PreparedStatement ps;
+        ResultSet rs;
+
         try {
-            String sql = "select nome, email, papel, sexo, status, reputacao, data_cadastro from pessoa";
+            String sql = """
+                SELECT 
+                    id_pessoa,
+                    nome,
+                    cpf,
+                    email,
+                    papel,
+                    sexo,
+                    data_nascimento,
+                    status,
+                    reputacao,
+                    data_cadastro
+                FROM pessoa
+                ORDER BY nome
+            """;
+
             ps = conexao.conectar().prepareStatement(sql);
-            rs = ps.executeQuery(); // executa o sql no banco e retorna o resultado
+            rs = ps.executeQuery();
+
             ArrayList<Pessoa> lista = new ArrayList<>();
+
             while (rs.next()) {
                 Pessoa p = new Pessoa();
-                //setar os valores dentro de um objeto (Pessoa)
-                //adicionar este objeto a uma list
+
+                p.setIdPessoa(rs.getInt("id_pessoa"));
                 p.setNome(rs.getString("nome"));
+                p.setCpf(rs.getString("cpf"));
                 p.setEmail(rs.getString("email"));
-                p.setReputacao(rs.getInt("reputacao"));
                 p.setPapel(rs.getString("papel"));
                 p.setSexo(rs.getString("sexo"));
+                p.setDataNascimento(rs.getString("data_nascimento"));
                 p.setStatus(rs.getString("status"));
+                p.setReputacao(rs.getInt("reputacao"));
                 p.setDataCadastro(rs.getString("data_cadastro"));
+
                 lista.add(p);
             }
+
             return lista;
+
         } catch (SQLException erro) {
-            System.err.print("Exceção gerada ao tentar buscar os dados: " + erro.getMessage());
+            System.out.println("Exceção gerada ao tentar buscar os dados: " + erro.getMessage());
             return null;
         } finally {
             conexao.desconectar();
@@ -89,6 +133,7 @@ public class PessoasDAO {
     public Pessoa login(String email, String senhaDigitada) {
         PreparedStatement ps;
         ResultSet rs;
+
         try {
             String sql = "SELECT * FROM pessoa WHERE email = ? AND status = 'ATIVO'";
 
@@ -100,25 +145,88 @@ public class PessoasDAO {
             if (rs.next()) {
                 String hashSalvo = rs.getString("senha");
 
-                // Verifica BCrypt corretamente
                 if (SenhaUtil.verificarSenha(senhaDigitada, hashSalvo)) {
                     Pessoa p = new Pessoa();
+
                     p.setIdPessoa(rs.getInt("id_pessoa"));
                     p.setNome(rs.getString("nome"));
+                    p.setCpf(rs.getString("cpf"));
                     p.setEmail(rs.getString("email"));
                     p.setPapel(rs.getString("papel"));
                     p.setSexo(rs.getString("sexo"));
+                    p.setDataNascimento(rs.getString("data_nascimento"));
                     p.setStatus(rs.getString("status"));
                     p.setReputacao(rs.getInt("reputacao"));
+                    p.setDataCadastro(rs.getString("data_cadastro"));
+
                     return p;
                 }
             }
 
             return null;
 
-        } catch (SQLException e) {
-            System.out.println("Erro no login: " + e.getMessage());
+        } catch (SQLException erro) {
+            System.out.println("Erro no login: " + erro.getMessage());
             return null;
+        } finally {
+            conexao.desconectar();
+        }
+    }
+
+    public boolean atualizarPerfil(Pessoa p) {
+        try {
+            String sql = """
+                UPDATE pessoa
+                SET nome = ?,
+                    email = ?,
+                    papel = ?,
+                    sexo = ?,
+                    data_nascimento = ?
+                WHERE id_pessoa = ?
+            """;
+
+            PreparedStatement ps = conexao.conectar().prepareStatement(sql);
+
+            ps.setString(1, p.getNome());
+            ps.setString(2, p.getEmail());
+            ps.setString(3, p.getPapel());
+            ps.setString(4, p.getSexo());
+
+            if (p.getDataNascimento() == null || p.getDataNascimento().isEmpty()) {
+                ps.setNull(5, Types.DATE);
+            } else {
+                ps.setString(5, p.getDataNascimento());
+            }
+
+            ps.setInt(6, p.getIdPessoa());
+
+            return ps.executeUpdate() != 0;
+
+        } catch (SQLException erro) {
+            System.out.println("Erro ao atualizar perfil: " + erro.getMessage());
+            return false;
+        } finally {
+            conexao.desconectar();
+        }
+    }
+
+    public boolean excluirConta(int idPessoa) {
+        try {
+            String sql = """
+                UPDATE pessoa
+                SET status = 'INATIVO'
+                WHERE id_pessoa = ?
+            """;
+
+            PreparedStatement ps = conexao.conectar().prepareStatement(sql);
+
+            ps.setInt(1, idPessoa);
+
+            return ps.executeUpdate() != 0;
+
+        } catch (SQLException erro) {
+            System.out.println("Erro ao excluir conta: " + erro.getMessage());
+            return false;
         } finally {
             conexao.desconectar();
         }

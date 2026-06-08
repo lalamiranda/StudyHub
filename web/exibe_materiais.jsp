@@ -1,4 +1,7 @@
 <%@page import="VO.Pessoa"%>
+<%@page import="VO.Material"%>
+<%@page import="java.util.List"%>
+<%@page contentType="text/html" pageEncoding="UTF-8"%>
 
 <%
     Pessoa usuarioLogado = (Pessoa) session.getAttribute("usuarioLogado");
@@ -7,87 +10,107 @@
         response.sendRedirect("login.jsp");
         return;
     }
+
+    List materiais = (List) request.getAttribute("lista");
 %>
 
-<%@page import="VO.Material"%>
-<%@page import="java.util.List"%>
-
-<%@page contentType="text/html" pageEncoding="UTF-8"%>
-
 <!DOCTYPE html>
-<html>
-    <head>
-        <meta charset="UTF-8">
-        <title>Materiais</title>
-    </head>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Biblioteca - StudyHub</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+</head>
 
-    <body>
+<body>
+    <%@include file="includes/menu.jsp" %>
 
-        <h1 align="center">Biblioteca Digital</h1>
+    <div class="container">
+        <!-- Page Header -->
+        <div class="card">
+            <div class="card-body">
+                <h1 class="page-title">Biblioteca Digital</h1>
+                <p class="page-subtitle">Consulte e compartilhe materiais de estudo.</p>
 
-        <%
-            List materiais = (List) request.getAttribute("lista");
+                <div style="display: flex; gap: 1rem; margin-top: 1.5rem; flex-wrap: wrap;">
+                    <a class="btn btn-primary" href="inserir_material.jsp">Cadastrar novo material</a>
+                    <a class="btn btn-outline" href="index.jsp">Voltar</a>
+                </div>
+            </div>
+        </div>
 
-            if (materiais != null && !materiais.isEmpty()) {
+        <!-- Lista de materias -->
+        <div class="card" style="margin-top: 1.5rem;">
+            <div class="card-body">
+                <h3 style="font-size: 1rem; font-weight: 600; margin-bottom: 1rem; color: var(--text); border-left: 3px solid var(--accent); padding-left: 0.75rem;">
+                    Materiais cadastrados
+                </h3>
 
-                out.print("<center>Materiais encontrados: " + materiais.size() + "</center><br>");
+                <% if (materiais != null && !materiais.isEmpty()) { %>
+                    <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 1.5rem;">
+                        Materiais encontrados: <strong><%= materiais.size() %></strong>
+                    </p>
 
-                out.print("<table width='70%' border='1' cellspacing='0' align='center'>");
-
-                out.print("<tr>");
-                out.print("<th>Título</th>");
-                out.print("<th>Descrição</th>");
-                out.print("<th>Tipo</th>");
-                out.print("<th>Link</th>");
-                out.print("<th>Cadastrado por</th>");
-                out.print("<th>Data</th>");
-                out.print("<th>Ações</th>");
-                out.print("</tr>");
-
-                for (int i = 0; i < materiais.size(); i++) {
-
-                    Material m = (Material) materiais.get(i);
-
-                    out.print("<tr>");
-                    out.print("<td>" + m.getTitulo() + "</td>");
-                    out.print("<td>" + m.getDescricao() + "</td>");
-                    out.print("<td>" + m.getTipo() + "</td>");
-                    out.print("<td><a href='" + m.getLinkExterno() + "' target='_blank'>Acessar</a></td>");
-                    out.print("<td>" + m.getNomePessoa() + "</td>");
-                    out.print("<td>" + m.getDataUpload() + "</td>");
-
-                    out.print("<td>");
-
-                    out.print("<a href='MateriaisController?op=4&id_material=" + m.getIdMaterial() + "'>");
-                    out.print("Editar");
-                    out.print("</a>");
-
-                    out.print(" | ");
-
-                    out.print("<a href='MateriaisController?op=3&id_material=" + m.getIdMaterial() + "' ");
-                    out.print("onclick=\"return confirm('Tem certeza que deseja excluir este material?');\">");
-                    out.print("Excluir");
-                    out.print("</a>");
-
-                    out.print("</td>");
-
-                    out.print("</tr>");
-                }
-
-                out.print("</table>");
-
-            } else {
-                out.print("<center>Nenhum material cadastrado.</center>");
-            }
-        %>
-
-        <br><br>
-
-    <center>
-        <a href="inserir_material.jsp">Cadastrar novo material</a>
-        <br><br>
-        <a href="index.jsp">Página inicial</a>
-    </center>
-
+                    <div class="table-wrap">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Título</th>
+                                    <th>Descrição</th>
+                                    <th>Tipo</th>
+                                    <th>Link</th>
+                                    <th>Cadastrado por</th>
+                                    <th>Data</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% for (int i = 0; i < materiais.size(); i++) {
+                                    Material m = (Material) materiais.get(i);
+                                %>
+                                    <tr>
+                                        <td><strong><%= m.getTitulo() %></strong></td>
+                                        <td><%= m.getDescricao() %></td>
+                                        <td>
+                                            <span class="badge badge-<%= m.getTipo() %>">
+                                                <%= m.getTipo() %>
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <a href="<%= m.getLinkExterno() %>" target="_blank" style="color: var(--accent); text-decoration: none; font-weight: 600;">
+                                                Acessar
+                                            </a>
+                                        </td>
+                                        <td><%= m.getNomePessoa() %></td>
+                                        <td><%= m.getDataUpload() %></td>
+                                        <td>
+                                            <a href="MateriaisController?op=4&id_material=<%= m.getIdMaterial() %>" class="btn btn-sm">
+                                                Editar
+                                            </a>
+                                            <a href="MateriaisController?op=3&id_material=<%= m.getIdMaterial() %>" 
+                                               onclick="return confirm('Tem certeza que deseja excluir este material?');" 
+                                               class="btn btn-sm btn-danger">
+                                                Excluir
+                                            </a>
+                                        </td>
+                                    </tr>
+                                <% } %>
+                            </tbody>
+                        </table>
+                    </div>
+                <% } else { %>
+                    <div class="empty-state">
+                        <p style="font-size: 1rem; color: var(--text-muted);">
+                            Nenhum material cadastrado.
+                        </p>
+                        <a class="btn btn-primary" href="inserir_material.jsp" style="margin-top: 1rem;">
+                            Cadastrar primeiro material
+                        </a>
+                    </div>
+                <% } %>
+            </div>
+        </div>
+    </div>
 </body>
 </html>

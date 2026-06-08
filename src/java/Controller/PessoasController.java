@@ -11,59 +11,148 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-/**
- *
- * @author Jean
- */
 public class PessoasController extends HttpServlet {
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
-        HttpSession session = request.getSession(false);
 
-        if (session == null || session.getAttribute("usuarioLogado") == null) {
-            response.sendRedirect("login.jsp");
-            return;
-        }
+        request.setCharacterEncoding("UTF-8");
+        response.setCharacterEncoding("UTF-8");
 
         int operacao = Integer.parseInt(request.getParameter("op"));
+
         PessoasDAO p = new PessoasDAO();
 
+        HttpSession session = request.getSession(false);
+
+        boolean cadastroPublico = operacao == 1 && "1".equals(request.getParameter("publico"));
+        boolean login = operacao == 3;
+
+        if (!cadastroPublico && !login) {
+            if (session == null || session.getAttribute("usuarioLogado") == null) {
+                response.sendRedirect("login.jsp");
+                return;
+            }
+        }
+
         switch (operacao) {
+
             case 1 -> {
                 String cpf = request.getParameter("cpf");
 
-                // Valida o CPF antes de inserir
                 if (!Validadorcpf.validar(cpf)) {
-                    response.sendRedirect("exibe_resultado.jsp?result=CPF inválido");
+                    if (cadastroPublico) {
+                        response.sendRedirect("cadastro.jsp?erro=cpf");
+                    } else {
+                        response.sendRedirect("exibe_resultado.jsp?result=CPF inválido");
+                    }
                     return;
                 }
 
                 Pessoa pes = new Pessoa();
+
                 pes.setCpf(cpf);
                 pes.setNome(request.getParameter("nome"));
                 pes.setEmail(request.getParameter("email"));
-                pes.setPapel(request.getParameter("papel"));
                 pes.setSexo(request.getParameter("sexo"));
+                pes.setDataNascimento(request.getParameter("dataNascimento"));
                 pes.setSenha(request.getParameter("senha"));
-                response.sendRedirect("exibe_resultado.jsp?result=" + p.inserir(pes));
+
+                String papel = request.getParameter("papel");
+
+                if (cadastroPublico) {
+                    if (!"ALUNO".equals(papel) && !"PROFESSOR".equals(papel)) {
+                        papel = "ALUNO";
+                    }
+                }
+
+                pes.setPapel(papel);
+
+                boolean resultado = p.inserir(pes);
+
+                if (cadastroPublico) {
+                    if (resultado) {
+                        response.sendRedirect("login.jsp");
+                    } else {
+                        response.sendRedirect("cadastro.jsp?erro=1");
+                    }
+                } else {
+                    response.sendRedirect("exibe_resultado.jsp?result=" + resultado);
+                }
             }
+
             case 2 -> {
                 request.setAttribute("lista", p.listar());
+
                 RequestDispatcher rd = request.getRequestDispatcher("/exibe_pessoas.jsp");
                 rd.forward(request, response);
             }
+
             case 3 -> {
                 String email = request.getParameter("email");
                 String senha = request.getParameter("senha");
-                boolean autenticado = p.autenticar(email, senha);
-                if (autenticado) {
-                    request.getSession().setAttribute("usuarioLogado", email);
-                    response.sendRedirect("exibe_pessoas.jsp");
+
+                Pessoa pessoa = p.login(email, senha);
+
+                if (pessoa != null) {
+                    request.getSession().setAttribute("usuarioLogado", pessoa);
+                    response.sendRedirect("index.jsp");
                 } else {
-                    response.sendRedirect("index.html?erro=1");
+                    response.sendRedirect("login.jsp");
                 }
+            }
+
+            case 4 -> {
+                Pessoa usuarioLogado = (Pessoa) session.getAttribute("usuarioLogado");
+
+                Pessoa pes = new Pessoa();
+
+                pes.setIdPessoa(usuarioLogado.getIdPessoa());
+                pes.setNome(request.getParameter("nome"));
+                pes.setEmail(request.getParameter("email"));
+                pes.setSexo(request.getParameter("sexo"));
+                pes.setDataNascimento(request.getParameter("dataNascimento"));
+
+                String papel = request.getParameter("papel");
+
+                if (!"ALUNO".equals(papel) && !"PROFESSOR".equals(papel)) {
+                    papel = usuarioLogado.getPapel();
+                }
+
+                pes.setPapel(papel);
+
+                boolean resultado = p.atualizarPerfil(pes);
+
+                if (resultado) {
+                    usuarioLogado.setNome(pes.getNome());
+                    usuarioLogado.setEmail(pes.getEmail());
+                    usuarioLogado.setSexo(pes.getSexo());
+                    usuarioLogado.setDataNascimento(pes.getDataNascimento());
+                    usuarioLogado.setPapel(pes.getPapel());
+
+                    session.setAttribute("usuarioLogado", usuarioLogado);
+
+                    response.sendRedirect("perfil.jsp?msg=editado");
+                } else {
+                    response.sendRedirect("perfil.jsp?erro=erro");
+                }
+            }
+
+            case 5 -> {
+                Pessoa usuarioLogado = (Pessoa) session.getAttribute("usuarioLogado");
+
+                boolean resultado = p.excluirConta(usuarioLogado.getIdPessoa());
+
+                if (resultado) {
+                    session.invalidate();
+                    response.sendRedirect("login.jsp");
+                } else {
+                    response.sendRedirect("perfil.jsp?erro=erro");
+                }
+            }
+
+            default -> {
+                response.sendRedirect("index.jsp");
             }
         }
     }
@@ -82,6 +171,6 @@ public class PessoasController extends HttpServlet {
 
     @Override
     public String getServletInfo() {
-        return "Short description";
+        return "PessoasController";
     }
 }

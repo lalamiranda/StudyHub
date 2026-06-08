@@ -13,6 +13,15 @@ public class Resposta {
     private String nomePessoa;
     private int quantidadeGostei;
     private int quantidadeNaoGostei;
+    private String votoUsuario;
+
+    public String getVotoUsuario() {
+    return votoUsuario;
+    }
+
+    public void setVotoUsuario(String votoUsuario) {
+    this.votoUsuario = votoUsuario;
+    }
 
     public int getQuantidadeGostei() {
         return quantidadeGostei;

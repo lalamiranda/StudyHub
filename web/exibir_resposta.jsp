@@ -1,3 +1,6 @@
+<%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@page import="java.util.ArrayList"%>
+<%@page import="VO.Resposta"%>
 <%@page import="VO.Pessoa"%>
 
 <%
@@ -7,138 +10,219 @@
         response.sendRedirect("login.jsp");
         return;
     }
+
+    ArrayList<Resposta> lista = (ArrayList<Resposta>) request.getAttribute("lista");
+
+    Integer id_pergunta = (Integer) request.getAttribute("id_pergunta");
+
+    if (id_pergunta == null) {
+        String idParam = request.getParameter("id_pergunta");
+
+        if (idParam != null) {
+            id_pergunta = Integer.parseInt(idParam);
+        }
+    }
+
+    if (lista == null) {
+        response.sendRedirect("PerguntasController?op=2");
+        return;
+    }
 %>
 
-<%@page import="VO.Resposta"%>
-<%@page import="java.util.List"%>
-<%@page contentType="text/html" pageEncoding="UTF-8"%>
-
 <!DOCTYPE html>
-<html>
-    <head>
-        <meta charset="UTF-8">
-        <title>Respostas</title>
-    </head>
-    <body>
+<html lang="pt-BR">
 
-        <h1 align="center">Respostas</h1>
+<head>
+    <meta charset="UTF-8">
+    <title>Respostas - StudyHub</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+</head>
 
-        <%
-            List respostas = (List) request.getAttribute("lista");
+<body>
 
-            if (respostas != null && !respostas.isEmpty()) {
+    <%@include file="includes/menu.jsp" %>
 
-                out.print("<center>Encontradas: " + respostas.size() + "</center><br><br>");
+    <main class="container">
 
-                out.print("<table width='80%' border='1' cellspacing='0' align='center'>");
+        <section class="page-header">
+            <div>
+                <h1 class="page-title">Respostas</h1>
+            </div>
 
-                out.print("<tr>");
-                out.print("<th>Resposta</th>");
-                out.print("<th>Autor</th>");
-                out.print("<th>Data</th>");
-                out.print("<th>Votos</th>");
-                out.print("<th>Ações</th>");
-                out.print("</tr>");
-                for (int cont = 0; cont < respostas.size(); cont++) {
-                    Resposta r = (Resposta) respostas.get(cont);
+            <p class="page-subtitle">
+                Veja as respostas para esta pergunta
+            </p>
+        </section>
 
-                    out.print("<tr>");
+        <section class="card">
+            <div class="card-body">
 
-                    out.print("<td>" + r.getResposta() + "</td>");
+                <p class="text-muted">
+                    Encontradas:
+                    <strong><%= lista.size() %></strong>
+                    resposta(s)
+                </p>
 
-                    if (r.getNomePessoa() != null) {
-                        out.print("<td>" + r.getNomePessoa() + "</td>");
-                    } else {
-                        out.print("<td>Usuário não encontrado</td>");
-                    }
+                <% if (lista.isEmpty()) { %>
 
-                    out.print("<td>" + r.getDataPostagem() + "</td>");
-                    out.print("<td align='center'>👍 " + r.getQuantidadeGostei() + " | 👎 " + r.getQuantidadeNaoGostei() + "</td>");
-                    // STATUS
-                    String status = "";
+                    <div class="empty-state">
+                        <p>Nenhuma resposta cadastrada para esta pergunta.</p>
+                    </div>
 
-                    if (r.getCorreta() == null) {
-                        status = "⏳ Ainda não avaliado";
-                    } else if (r.getCorreta()) {
-                        status = "✅ Gostei";
-                    } else {
-                        status = "❌ Não gostei";
-                    }
+                <% } else { %>
 
-                    out.print("<td align='center'>" + status + "</td>");
+                    <% for (Resposta r : lista) { %>
 
-                    // AÇÕES
-                    out.print("<td align='center'>");
+                        <div class="answer-card">
 
-                    // BOTÃO GOSTEI
-                    out.print("<form action='RespostasController' method='post'>");
+                            <div class="answer-content">
+                                <p><%= r.getResposta() %></p>
+                            </div>
 
-                    out.print("<input type='hidden' name='op' value='3'>");
+                            <div class="answer-footer">
 
-                    out.print("<input type='hidden' name='id_resposta' value='"
-                            + r.getIdResposta() + "'>");
+                                <div class="answer-meta">
+                                    <span>
+                                        Autor:
+                                        <strong><%= r.getNomePessoa() %></strong>
+                                    </span>
 
-                    out.print("<input type='hidden' name='id_pergunta' value='"
-                            + request.getAttribute("id_pergunta") + "'>");
+                                    <span>
+                                        <%= r.getDataPostagem() %>
+                                    </span>
 
-                    out.print("<input type='hidden' name='tipo' value='GOSTEI'>");
+                                    <% if ("GOSTEI".equals(r.getVotoUsuario())) { %>
 
-                    out.print("<button type='submit'>👍 Gostei</button>");
+                                        <span class="badge badge-success">
+                                            ✅ Você curtiu
+                                        </span>
 
-                    out.print("</form>");
+                                    <% } else if ("NAO_GOSTEI".equals(r.getVotoUsuario())) { %>
 
-                    out.print("<br>");
+                                        <span class="badge badge-danger">
+                                            👎 Você não curtiu
+                                        </span>
 
-                    // BOTÃO NÃO GOSTEI
-                    out.print("<form action='RespostasController' method='post'>");
+                                    <% } else { %>
 
-                    out.print("<input type='hidden' name='op' value='3'>");
+                                        <span class="badge badge-neutral">
+                                            ⏳ Você ainda não votou
+                                        </span>
 
-                    out.print("<input type='hidden' name='id_resposta' value='"
-                            + r.getIdResposta() + "'>");
+                                    <% } %>
 
-                    out.print("<input type='hidden' name='id_pergunta' value='"
-                            + request.getAttribute("id_pergunta") + "'>");
+                                    <% if (r.getCorreta() != null) { %>
 
-                    out.print("<input type='hidden' name='tipo' value='NAO_GOSTEI'>");
+                                        <% if (r.getCorreta()) { %>
+                                            <span class="badge badge-success">
+                                                ✔ Resposta correta
+                                            </span>
+                                        <% } else { %>
+                                            <span class="badge badge-danger">
+                                                ✘ Resposta incorreta
+                                            </span>
+                                        <% } %>
 
-                    out.print("<button type='submit'>👎 Não gostei</button>");
+                                    <% } %>
+                                </div>
 
-                    out.print("</form>");
+                                <div class="vote-area">
 
-                    out.print("</td>");
+                                    <form method="post" action="RespostasController" class="vote-form">
+                                        <input type="hidden" name="op" value="3">
+                                        <input type="hidden" name="id_resposta" value="<%= r.getIdResposta() %>">
+                                        <input type="hidden" name="id_pergunta" value="<%= id_pergunta %>">
+                                        <input type="hidden" name="tipo" value="GOSTEI">
 
-                    out.print("</tr>");
-                }
+                                        <button type="submit"
+                                                class="vote-btn up <%= "GOSTEI".equals(r.getVotoUsuario()) ? "active" : "" %>">
+                                            👍 <%= r.getQuantidadeGostei() %>
+                                        </button>
+                                    </form>
 
-                out.print("</table>");
+                                    <form method="post" action="RespostasController" class="vote-form">
+                                        <input type="hidden" name="op" value="3">
+                                        <input type="hidden" name="id_resposta" value="<%= r.getIdResposta() %>">
+                                        <input type="hidden" name="id_pergunta" value="<%= id_pergunta %>">
+                                        <input type="hidden" name="tipo" value="NAO_GOSTEI">
 
-            } else {
-                out.print("<center>Nenhuma resposta ainda.</center>");
-            }
-        %>
+                                        <button type="submit"
+                                                class="vote-btn down <%= "NAO_GOSTEI".equals(r.getVotoUsuario()) ? "active" : "" %>">
+                                            👎 <%= r.getQuantidadeNaoGostei() %>
+                                        </button>
+                                    </form>
 
-        <br><br>
+                                </div>
 
-    <center>
+                            </div>
 
-        <a href="inserir_resposta.jsp?id_pergunta=<%= request.getAttribute("id_pergunta")%>">
-            Responder esta pergunta
-        </a>
+                            <% if ("PROFESSOR".equals(usuarioLogado.getPapel()) || "ADMIN".equals(usuarioLogado.getPapel())) { %>
 
-        <br><br>
+                                <div class="answer-actions">
 
-        <a href="PerguntasController?op=2">
-            Voltar para perguntas
-        </a>
+                                    <form method="post" action="RespostasController">
+                                        <input type="hidden" name="op" value="4">
+                                        <input type="hidden" name="id_resposta" value="<%= r.getIdResposta() %>">
+                                        <input type="hidden" name="id_pergunta" value="<%= id_pergunta %>">
+                                        <input type="hidden" name="correta" value="true">
 
-        <br><br>
+                                        <button type="submit" class="btn btn-success">
+                                            Marcar correta
+                                        </button>
+                                    </form>
 
-        <a href="index.jsp">
-            Página inicial
-        </a>
+                                    <form method="post" action="RespostasController">
+                                        <input type="hidden" name="op" value="4">
+                                        <input type="hidden" name="id_resposta" value="<%= r.getIdResposta() %>">
+                                        <input type="hidden" name="id_pergunta" value="<%= id_pergunta %>">
+                                        <input type="hidden" name="correta" value="false">
 
-    </center>
+                                        <button type="submit" class="btn btn-danger">
+                                            Marcar incorreta
+                                        </button>
+                                    </form>
+
+                                    <form method="post" action="RespostasController">
+                                        <input type="hidden" name="op" value="4">
+                                        <input type="hidden" name="id_resposta" value="<%= r.getIdResposta() %>">
+                                        <input type="hidden" name="id_pergunta" value="<%= id_pergunta %>">
+                                        <input type="hidden" name="correta" value="null">
+
+                                        <button type="submit" class="btn btn-secondary">
+                                            Limpar correção
+                                        </button>
+                                    </form>
+
+                                </div>
+
+                            <% } %>
+
+                        </div>
+
+                    <% } %>
+
+                <% } %>
+
+            </div>
+        </section>
+
+        <div class="page-actions">
+
+            <a href="inserir_resposta.jsp?id_pergunta=<%= id_pergunta %>" class="btn btn-primary">
+                Responder esta pergunta
+            </a>
+
+            <a href="PerguntasController?op=2" class="btn btn-secondary">
+                Voltar para perguntas
+            </a>
+
+            <a href="index.jsp" class="btn btn-secondary">
+                Página inicial
+            </a>
+
+        </div>
+
+    </main>
 
 </body>
 </html>

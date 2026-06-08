@@ -5,6 +5,8 @@ import VO.Pessoa;
 import VO.Resposta;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -17,6 +19,10 @@ public class RespostasController extends HttpServlet {
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+
+        request.setCharacterEncoding("UTF-8");
+        response.setCharacterEncoding("UTF-8");
+
         HttpSession session = request.getSession(false);
 
         if (session == null || session.getAttribute("usuarioLogado") == null) {
@@ -24,79 +30,106 @@ public class RespostasController extends HttpServlet {
             return;
         }
 
+        Pessoa usuarioLogado = (Pessoa) session.getAttribute("usuarioLogado");
+
         String op = request.getParameter("op");
 
         if (op == null) {
-            op = "1";
+            response.sendRedirect("PerguntasController?op=2");
+            return;
         }
+
+        RespostasDAO dao = new RespostasDAO();
 
         switch (op) {
 
-            case "1":
-
-                Pessoa usuario = (Pessoa) session.getAttribute("usuarioLogado");
+            case "1": {
+                int idPergunta = Integer.parseInt(request.getParameter("id_pergunta"));
+                String textoResposta = request.getParameter("resposta");
 
                 Resposta resposta = new Resposta();
 
-                resposta.setIdPergunta(
-                        Integer.parseInt(request.getParameter("id_pergunta")));
-
-                resposta.setIdUsuario(usuario.getIdPessoa());
-
-                resposta.setResposta(
-                        request.getParameter("resposta"));
-
+                resposta.setIdPergunta(idPergunta);
+                resposta.setIdUsuario(usuarioLogado.getIdPessoa());
+                resposta.setResposta(textoResposta);
                 resposta.setCorreta(null);
 
-                RespostasDAO dao = new RespostasDAO();
+                boolean resultado = dao.inserir(resposta);
 
-                dao.inserir(resposta);
-
-                response.sendRedirect(
-                        "RespostasController?op=2&id_pergunta="
-                        + resposta.getIdPergunta());
+                if (resultado) {
+                    response.sendRedirect("RespostasController?op=2&id_pergunta=" + idPergunta);
+                } else {
+                    response.sendRedirect("inserir_resposta.jsp?id_pergunta=" + idPergunta + "&erro=1");
+                }
 
                 break;
+            }
 
-            case "2":
-                int idPergunta = Integer.parseInt(
-                        request.getParameter("id_pergunta"));
+            case "2": {
+                int idPergunta = Integer.parseInt(request.getParameter("id_pergunta"));
 
-                RespostasDAO daoListar = new RespostasDAO();
+                ArrayList<Resposta> lista = dao.listarPorPergunta(
+                        idPergunta,
+                        usuarioLogado.getIdPessoa()
+                );
 
-                request.setAttribute("lista",
-                        daoListar.listarPorPergunta(idPergunta));
-
+                request.setAttribute("lista", lista);
                 request.setAttribute("id_pergunta", idPergunta);
 
-                request.getRequestDispatcher("exibir_resposta.jsp")
-                        .forward(request, response);
+                RequestDispatcher rd = request.getRequestDispatcher("exibir_resposta.jsp");
+                rd.forward(request, response);
+
                 break;
-            case "3":
+            }
 
-                int idResposta = Integer.parseInt(
-                        request.getParameter("id_resposta"));
-
-                int idPerg = Integer.parseInt(
-                        request.getParameter("id_pergunta"));
-
+            case "3": {
+                int idResposta = Integer.parseInt(request.getParameter("id_resposta"));
+                int idPergunta = Integer.parseInt(request.getParameter("id_pergunta"));
                 String tipo = request.getParameter("tipo");
 
-                Pessoa usuarioVoto = (Pessoa) session.getAttribute("usuarioLogado");
+                if (!"GOSTEI".equals(tipo) && !"NAO_GOSTEI".equals(tipo)) {
+                    response.sendRedirect("RespostasController?op=2&id_pergunta=" + idPergunta);
+                    return;
+                }
 
-                RespostasDAO daoCurtir = new RespostasDAO();
-
-                daoCurtir.votarResposta(
+                dao.votarResposta(
                         idResposta,
-                        usuarioVoto.getIdPessoa(),
-                        tipo);
+                        usuarioLogado.getIdPessoa(),
+                        tipo
+                );
 
-                response.sendRedirect(
-                        "RespostasController?op=2&id_pergunta=" + idPerg);
+                response.sendRedirect("RespostasController?op=2&id_pergunta=" + idPergunta);
 
                 break;
-        }
+            }
 
+            case "4": {
+                int idResposta = Integer.parseInt(request.getParameter("id_resposta"));
+                int idPergunta = Integer.parseInt(request.getParameter("id_pergunta"));
+                String valor = request.getParameter("correta");
+
+                Boolean correta = null;
+
+                if ("true".equals(valor)) {
+                    correta = true;
+                } else if ("false".equals(valor)) {
+                    correta = false;
+                }
+
+                if ("PROFESSOR".equals(usuarioLogado.getPapel()) || "ADMIN".equals(usuarioLogado.getPapel())) {
+                    dao.atualizarCorreta(idResposta, correta);
+                }
+
+                response.sendRedirect("RespostasController?op=2&id_pergunta=" + idPergunta);
+
+                break;
+            }
+
+            default: {
+                response.sendRedirect("PerguntasController?op=2");
+                break;
+            }
+        }
     }
 
     @Override
@@ -113,6 +146,6 @@ public class RespostasController extends HttpServlet {
 
     @Override
     public String getServletInfo() {
-        return "Short description";
+        return "RespostasController";
     }
 }

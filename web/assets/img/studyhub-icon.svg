@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="120" height="120">
+  <!-- Fundo quadrado arredondado -->
+  <rect width="120" height="120" rx="24" fill="#1a2a5e"/>
+  <!-- Página esquerda do livro -->
+  <rect x="27" y="33" width="34" height="54" rx="3" fill="white" opacity="0.9"/>
+  <!-- Página direita do livro -->
+  <rect x="63" y="33" width="34" height="54" rx="3" fill="white" opacity="0.7"/>
+  <!-- Lombada central -->
+  <rect x="58" y="30" width="4" height="60" rx="2" fill="white"/>
+  <!-- Linhas na página esquerda -->
+  <rect x="31" y="44" width="22" height="2.5" rx="1" fill="#1a2a5e" opacity="0.4"/>
+  <rect x="31" y="51" width="18" height="2.5" rx="1" fill="#1a2a5e" opacity="0.4"/>
+  <rect x="31" y="58" width="22" height="2.5" rx="1" fill="#1a2a5e" opacity="0.4"/>
+  <rect x="31" y="65" width="16" height="2.5" rx="1" fill="#1a2a5e" opacity="0.4"/>
+  <!-- Linhas na página direita -->
+  <rect x="67" y="44" width="22" height="2.5" rx="1" fill="#1a2a5e" opacity="0.3"/>
+  <rect x="67" y="51" width="18" height="2.5" rx="1" fill="#1a2a5e" opacity="0.3"/>
+  <rect x="67" y="58" width="22" height="2.5" rx="1" fill="#1a2a5e" opacity="0.3"/>
+  <rect x="67" y="65" width="14" height="2.5" rx="1" fill="#1a2a5e" opacity="0.3"/>
+</svg>

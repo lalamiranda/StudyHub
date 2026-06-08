@@ -12,7 +12,7 @@
 
 <div class="navbar">
     <div class="navbar-brand">
-        <span class="dot"></span>
+        <img src="assets/img/studyhub-icon.svg" alt="StudyHub" width="28" height="28" />
         StudyHub
     </div>
 

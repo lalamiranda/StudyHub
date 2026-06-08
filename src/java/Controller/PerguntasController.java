@@ -1,9 +1,10 @@
 package Controller;
 
 import DAO.PerguntasDAO;
+import DAO.PessoasDAO;
+import DAO.TagsDAO;
 import VO.Pergunta;
 import VO.Pessoa;
-import DAO.TagsDAO;
 
 import java.io.IOException;
 import javax.servlet.ServletException;
@@ -18,6 +19,7 @@ public class PerguntasController extends HttpServlet {
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+
         HttpSession session = request.getSession(false);
 
         if (session == null || session.getAttribute("usuarioLogado") == null) {
@@ -48,67 +50,53 @@ public class PerguntasController extends HttpServlet {
 
             Pergunta pergunta = new Pergunta();
 
-            pergunta.setTitulo(
-                    request.getParameter("titulo"));
+            pergunta.setTitulo(request.getParameter("titulo"));
+            pergunta.setDescricao(request.getParameter("descricao"));
 
-            pergunta.setDescricao(
-                    request.getParameter("descricao"));
-
-            Pessoa pessoaLogada
-                    = (Pessoa) session.getAttribute("usuarioLogado");
+            Pessoa pessoaLogada = (Pessoa) session.getAttribute("usuarioLogado");
 
             pergunta.setIdPessoa(pessoaLogada.getIdPessoa());
+
             int idPergunta = dao.inserir(pergunta);
 
             if (idPergunta > 0) {
+
                 String[] tagsSelecionadas = request.getParameterValues("tags");
 
                 TagsDAO tagsDAO = new TagsDAO();
                 tagsDAO.salvarTagsDaPergunta(idPergunta, tagsSelecionadas);
-            }
 
-            response.sendRedirect(
-                    "PerguntasController?op=2");
+                PessoasDAO pessoasDAO = new PessoasDAO();
+                pessoasDAO.atualizarReputacao(pessoaLogada.getIdPessoa());
+
+                Pessoa pessoaAtualizada = pessoasDAO.buscarPorId(pessoaLogada.getIdPessoa());
+
+                if (pessoaAtualizada != null) {
+                    session.setAttribute("usuarioLogado", pessoaAtualizada);
+                }
+
+                response.sendRedirect("PerguntasController?op=2&msg=inserido");
+
+            } else {
+                response.sendRedirect("PerguntasController?op=2&erro=erro");
+            }
         }
     }
 
-    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
-    /**
-     * Handles the HTTP <code>GET</code> method.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         processRequest(request, response);
     }
 
-    /**
-     * Handles the HTTP <code>POST</code> method.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         processRequest(request, response);
     }
 
-    /**
-     * Returns a short description of the servlet.
-     *
-     * @return a String containing servlet description
-     */
     @Override
     public String getServletInfo() {
         return "Short description";
-    }// </editor-fold>
-
+    }
 }

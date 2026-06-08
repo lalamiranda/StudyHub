@@ -13,7 +13,17 @@ public class Resposta {
     private String nomePessoa;
     private int quantidadeGostei;
     private int quantidadeNaoGostei;
+    private int reputacaoAutor;
     private String votoUsuario;
+
+    public int getReputacaoAutor() {
+        return reputacaoAutor;
+    }
+
+    public void setReputacaoAutor(int reputacaoAutor) {
+        this.reputacaoAutor = reputacaoAutor;
+    }
+
 
     public String getVotoUsuario() {
     return votoUsuario;

@@ -11,6 +11,15 @@ public class Pergunta {
     private int visualizacoes;
     private boolean resolvida;
     private String nomePessoa;
+    private int reputacaoPessoa;
+
+    public int getReputacaoPessoa() {
+        return reputacaoPessoa;
+    }
+
+    public void setReputacaoPessoa(int reputacaoPessoa) {
+        this.reputacaoPessoa = reputacaoPessoa;
+    }
 
     public String getNomePessoa() {
         return nomePessoa;

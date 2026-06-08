@@ -14,6 +14,15 @@ public class Pessoa {
     private String dataCadastro;
     private String sexo;
     private String dataNascimento;
+    private int reputacaoAutor;
+
+    public int getReputacaoAutor() {
+        return reputacaoAutor;
+    }
+
+    public void setReputacaoAutor(int reputacaoAutor) {
+        this.reputacaoAutor = reputacaoAutor;
+    }
     
     public String getDataNascimento() {
     return dataNascimento;

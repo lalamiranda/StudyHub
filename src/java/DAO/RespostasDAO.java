@@ -63,46 +63,48 @@ public class RespostasDAO {
         try {
 
             String sql = """
-                SELECT 
-                    r.id_resposta,
-                    r.id_pergunta,
-                    r.id_usuario,
-                    r.resposta,
-                    r.correta,
-                    r.data_postagem,
-                    p.nome AS nome_pessoa,
+            SELECT
+                r.id_resposta,
+                r.id_pergunta,
+                r.id_usuario,
+                r.resposta,
+                r.correta,
+                r.data_postagem,
 
-                    SUM(CASE WHEN rv.tipo = 'GOSTEI' THEN 1 ELSE 0 END) AS qtd_gostei,
-                    SUM(CASE WHEN rv.tipo = 'NAO_GOSTEI' THEN 1 ELSE 0 END) AS qtd_nao_gostei,
+                p.nome AS nome_pessoa,
+                p.reputacao AS reputacao_autor,
 
-                    meu_voto.tipo AS voto_usuario
+                (
+                    SELECT COUNT(*)
+                    FROM resposta_votos rv
+                    WHERE rv.id_resposta = r.id_resposta
+                    AND rv.tipo = 'GOSTEI'
+                ) AS qtd_gostei,
 
-                FROM respostas r
+                (
+                    SELECT COUNT(*)
+                    FROM resposta_votos rv
+                    WHERE rv.id_resposta = r.id_resposta
+                    AND rv.tipo = 'NAO_GOSTEI'
+                ) AS qtd_nao_gostei,
 
-                LEFT JOIN pessoa p 
-                    ON r.id_usuario = p.id_pessoa
+                (
+                    SELECT rv.tipo
+                    FROM resposta_votos rv
+                    WHERE rv.id_resposta = r.id_resposta
+                    AND rv.id_usuario = ?
+                    LIMIT 1
+                ) AS voto_usuario
 
-                LEFT JOIN resposta_votos rv 
-                    ON r.id_resposta = rv.id_resposta
+            FROM respostas r
 
-                LEFT JOIN resposta_votos meu_voto
-                    ON r.id_resposta = meu_voto.id_resposta
-                    AND meu_voto.id_usuario = ?
+            INNER JOIN pessoa p
+                ON r.id_usuario = p.id_pessoa
 
-                WHERE r.id_pergunta = ?
+            WHERE r.id_pergunta = ?
 
-                GROUP BY 
-                    r.id_resposta,
-                    r.id_pergunta,
-                    r.id_usuario,
-                    r.resposta,
-                    r.correta,
-                    r.data_postagem,
-                    p.nome,
-                    meu_voto.tipo
-
-                ORDER BY r.data_postagem ASC
-            """;
+            ORDER BY r.data_postagem ASC
+        """;
 
             ps = conexao.conectar().prepareStatement(sql);
 
@@ -115,36 +117,38 @@ public class RespostasDAO {
 
             while (rs.next()) {
 
-                Resposta r = new Resposta();
+                Resposta resposta = new Resposta();
 
-                r.setIdResposta(rs.getInt("id_resposta"));
-                r.setIdPergunta(rs.getInt("id_pergunta"));
-                r.setIdUsuario(rs.getInt("id_usuario"));
-                r.setResposta(rs.getString("resposta"));
-                r.setDataPostagem(rs.getTimestamp("data_postagem"));
-                r.setNomePessoa(rs.getString("nome_pessoa"));
+                resposta.setIdResposta(rs.getInt("id_resposta"));
+                resposta.setIdPergunta(rs.getInt("id_pergunta"));
+                resposta.setIdUsuario(rs.getInt("id_usuario"));
+                resposta.setResposta(rs.getString("resposta"));
+                resposta.setDataPostagem(rs.getTimestamp("data_postagem"));
 
                 Boolean valorCorreta = rs.getBoolean("correta");
 
                 if (rs.wasNull()) {
-                    r.setCorreta(null);
+                    resposta.setCorreta(null);
                 } else {
-                    r.setCorreta(valorCorreta);
+                    resposta.setCorreta(valorCorreta);
                 }
 
-                r.setQuantidadeGostei(rs.getInt("qtd_gostei"));
-                r.setQuantidadeNaoGostei(rs.getInt("qtd_nao_gostei"));
+                resposta.setNomePessoa(rs.getString("nome_pessoa"));
+                resposta.setReputacaoAutor(rs.getInt("reputacao_autor"));
 
-                r.setVotoUsuario(rs.getString("voto_usuario"));
+                resposta.setQuantidadeGostei(rs.getInt("qtd_gostei"));
+                resposta.setQuantidadeNaoGostei(rs.getInt("qtd_nao_gostei"));
 
-                lista.add(r);
+                resposta.setVotoUsuario(rs.getString("voto_usuario"));
+
+                lista.add(resposta);
             }
 
             return lista;
 
         } catch (SQLException e) {
 
-            System.out.println("Erro ao listar respostas: " + e.getMessage());
+            System.out.println("Erro ao listar respostas por pergunta: " + e.getMessage());
             return null;
 
         } finally {
@@ -360,5 +364,34 @@ public class RespostasDAO {
 
             conexao.desconectar();
         }
+    }
+
+    public int buscarAutorResposta(int idResposta) {
+
+        PreparedStatement ps;
+        ResultSet rs;
+
+        try {
+
+            String sql = """
+            SELECT id_usuario
+            FROM respostas
+            WHERE id_resposta = ?
+        """;
+
+            ps = conexao.conectar().prepareStatement(sql);
+            ps.setInt(1, idResposta);
+
+            rs = ps.executeQuery();
+
+            if (rs.next()) {
+                return rs.getInt("id_usuario");
+            }
+
+        } catch (SQLException e) {
+            System.out.println("Erro ao buscar autor da resposta: " + e.getMessage());
+        }
+
+        return 0;
     }
 }

@@ -1,6 +1,7 @@
 package Controller;
 
 import DAO.RespostasDAO;
+import DAO.PessoasDAO;
 import VO.Pessoa;
 import VO.Resposta;
 
@@ -40,6 +41,7 @@ public class RespostasController extends HttpServlet {
         }
 
         RespostasDAO dao = new RespostasDAO();
+        PessoasDAO pessoasDAO = new PessoasDAO();
 
         switch (op) {
 
@@ -57,7 +59,17 @@ public class RespostasController extends HttpServlet {
                 boolean resultado = dao.inserir(resposta);
 
                 if (resultado) {
+
+                    pessoasDAO.atualizarReputacao(usuarioLogado.getIdPessoa());
+
+                    Pessoa usuarioAtualizado = pessoasDAO.buscarPorId(usuarioLogado.getIdPessoa());
+
+                    if (usuarioAtualizado != null) {
+                        session.setAttribute("usuarioLogado", usuarioAtualizado);
+                    }
+
                     response.sendRedirect("RespostasController?op=2&id_pergunta=" + idPergunta);
+
                 } else {
                     response.sendRedirect("inserir_resposta.jsp?id_pergunta=" + idPergunta + "&erro=1");
                 }
@@ -97,6 +109,20 @@ public class RespostasController extends HttpServlet {
                         usuarioLogado.getIdPessoa(),
                         tipo
                 );
+
+                int idAutorResposta = dao.buscarAutorResposta(idResposta);
+
+                if (idAutorResposta > 0) {
+                    pessoasDAO.atualizarReputacao(idAutorResposta);
+                }
+
+                if (idAutorResposta == usuarioLogado.getIdPessoa()) {
+                    Pessoa usuarioAtualizado = pessoasDAO.buscarPorId(usuarioLogado.getIdPessoa());
+
+                    if (usuarioAtualizado != null) {
+                        session.setAttribute("usuarioLogado", usuarioAtualizado);
+                    }
+                }
 
                 response.sendRedirect("RespostasController?op=2&id_pergunta=" + idPergunta);
 

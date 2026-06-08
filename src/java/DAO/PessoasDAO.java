@@ -231,4 +231,123 @@ public class PessoasDAO {
             conexao.desconectar();
         }
     }
+
+    public boolean atualizarReputacao(int idPessoa) {
+
+        PreparedStatement ps;
+
+        try {
+
+            String sql = """
+            UPDATE pessoa
+            SET reputacao =
+                COALESCE((
+                    SELECT COUNT(*)
+                    FROM perguntas
+                    WHERE id_pessoa = ?
+                ), 0) * 3
+                +
+                COALESCE((
+                    SELECT COUNT(*)
+                    FROM respostas
+                    WHERE id_usuario = ?
+                ), 0) * 5
+                +
+                COALESCE((
+                    SELECT COUNT(*)
+                    FROM resposta_votos rv
+                    INNER JOIN respostas r
+                        ON rv.id_resposta = r.id_resposta
+                    WHERE r.id_usuario = ?
+                    AND rv.tipo = 'GOSTEI'
+                ), 0) * 10
+                -
+                COALESCE((
+                    SELECT COUNT(*)
+                    FROM resposta_votos rv
+                    INNER JOIN respostas r
+                        ON rv.id_resposta = r.id_resposta
+                    WHERE r.id_usuario = ?
+                    AND rv.tipo = 'NAO_GOSTEI'
+                ), 0) * 2
+            WHERE id_pessoa = ?
+        """;
+
+            ps = conexao.conectar().prepareStatement(sql);
+
+            ps.setInt(1, idPessoa);
+            ps.setInt(2, idPessoa);
+            ps.setInt(3, idPessoa);
+            ps.setInt(4, idPessoa);
+            ps.setInt(5, idPessoa);
+
+            int linhas = ps.executeUpdate();
+
+            System.out.println("Reputação recalculada");
+            System.out.println("ID recebido: " + idPessoa);
+            System.out.println("Linhas alteradas: " + linhas);
+
+            return linhas > 0;
+
+        } catch (SQLException e) {
+            System.out.println("Erro ao recalcular reputação: " + e.getMessage());
+            return false;
+        } finally {
+            conexao.desconectar();
+        }
+    }
+
+    public Pessoa buscarPorId(int idPessoa) {
+
+        PreparedStatement ps;
+        ResultSet rs;
+
+        try {
+
+            String sql = """
+            SELECT *
+            FROM pessoa
+            WHERE id_pessoa = ?
+        """;
+
+            ps = conexao.conectar().prepareStatement(sql);
+            ps.setInt(1, idPessoa);
+
+            rs = ps.executeQuery();
+
+            if (rs.next()) {
+
+                Pessoa pessoa = new Pessoa();
+
+                pessoa.setIdPessoa(rs.getInt("id_pessoa"));
+                pessoa.setNome(rs.getString("nome"));
+                pessoa.setCpf(rs.getString("cpf"));
+                pessoa.setSenha(rs.getString("senha"));
+                pessoa.setEmail(rs.getString("email"));
+                pessoa.setReputacao(rs.getInt("reputacao"));
+                pessoa.setPapel(rs.getString("papel"));
+                pessoa.setStatus(rs.getString("status"));
+                pessoa.setDataCadastro(rs.getString("data_cadastro"));
+                pessoa.setSexo(rs.getString("sexo"));
+                pessoa.setDataNascimento(rs.getString("data_nascimento"));
+
+                return pessoa;
+            }
+
+        } catch (SQLException e) {
+            System.out.println("Erro ao buscar pessoa por ID: " + e.getMessage());
+        }
+
+        return null;
+    }
+
+    private boolean temColuna(ResultSet rs, String nomeColuna) {
+
+        try {
+            rs.findColumn(nomeColuna);
+            return true;
+        } catch (SQLException e) {
+            return false;
+        }
+    }
 }

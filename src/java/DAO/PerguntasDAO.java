@@ -14,7 +14,6 @@ public class PerguntasDAO {
     private final Conexao conexao;
 
     public PerguntasDAO() {
-
         conexao = new Conexao();
     }
 
@@ -22,10 +21,10 @@ public class PerguntasDAO {
 
         try {
             String sql = """
-            INSERT INTO perguntas
-            (titulo, descricao, id_pessoa)
-            VALUES (?, ?, ?)
-        """;
+                INSERT INTO perguntas
+                (titulo, descricao, id_pessoa)
+                VALUES (?, ?, ?)
+            """;
 
             PreparedStatement ps = conexao.conectar().prepareStatement(
                     sql,
@@ -68,6 +67,7 @@ public class PerguntasDAO {
                     p.visualizacoes,
                     p.resolvida,
                     pe.nome AS nome_pessoa,
+                    pe.reputacao AS reputacao_pessoa,
                     GROUP_CONCAT(t.nome SEPARATOR ', ') AS tags
                 FROM perguntas p
                 LEFT JOIN pessoa pe ON p.id_pessoa = pe.id_pessoa
@@ -81,7 +81,8 @@ public class PerguntasDAO {
                     p.data_postagem,
                     p.visualizacoes,
                     p.resolvida,
-                    pe.nome
+                    pe.nome,
+                    pe.reputacao
                 ORDER BY p.id_pergunta DESC
             """;
 
@@ -101,6 +102,7 @@ public class PerguntasDAO {
                 p.setVisualizacoes(rs.getInt("visualizacoes"));
                 p.setResolvida(rs.getBoolean("resolvida"));
                 p.setNomePessoa(rs.getString("nome_pessoa"));
+                p.setReputacaoPessoa(rs.getInt("reputacao_pessoa"));
                 p.setTags(rs.getString("tags"));
 
                 lista.add(p);
@@ -121,33 +123,35 @@ public class PerguntasDAO {
 
         try {
             String sql = """
-            SELECT 
-                p.id_pergunta,
-                p.titulo,
-                p.descricao,
-                p.id_pessoa,
-                p.data_postagem,
-                p.visualizacoes,
-                p.resolvida,
-                pe.nome AS nome_pessoa,
-                GROUP_CONCAT(t2.nome SEPARATOR ', ') AS tags
-            FROM perguntas p
-            LEFT JOIN pessoa pe ON p.id_pessoa = pe.id_pessoa
-            INNER JOIN pergunta_tags ptFiltro ON p.id_pergunta = ptFiltro.id_pergunta
-            LEFT JOIN pergunta_tags pt2 ON p.id_pergunta = pt2.id_pergunta
-            LEFT JOIN tags t2 ON pt2.id_tag = t2.id_tag
-            WHERE ptFiltro.id_tag = ?
-            GROUP BY 
-                p.id_pergunta,
-                p.titulo,
-                p.descricao,
-                p.id_pessoa,
-                p.data_postagem,
-                p.visualizacoes,
-                p.resolvida,
-                pe.nome
-            ORDER BY p.id_pergunta DESC
-        """;
+                SELECT 
+                    p.id_pergunta,
+                    p.titulo,
+                    p.descricao,
+                    p.id_pessoa,
+                    p.data_postagem,
+                    p.visualizacoes,
+                    p.resolvida,
+                    pe.nome AS nome_pessoa,
+                    pe.reputacao AS reputacao_pessoa,
+                    GROUP_CONCAT(t2.nome SEPARATOR ', ') AS tags
+                FROM perguntas p
+                LEFT JOIN pessoa pe ON p.id_pessoa = pe.id_pessoa
+                INNER JOIN pergunta_tags ptFiltro ON p.id_pergunta = ptFiltro.id_pergunta
+                LEFT JOIN pergunta_tags pt2 ON p.id_pergunta = pt2.id_pergunta
+                LEFT JOIN tags t2 ON pt2.id_tag = t2.id_tag
+                WHERE ptFiltro.id_tag = ?
+                GROUP BY 
+                    p.id_pergunta,
+                    p.titulo,
+                    p.descricao,
+                    p.id_pessoa,
+                    p.data_postagem,
+                    p.visualizacoes,
+                    p.resolvida,
+                    pe.nome,
+                    pe.reputacao
+                ORDER BY p.id_pergunta DESC
+            """;
 
             PreparedStatement ps = conexao.conectar().prepareStatement(sql);
 
@@ -168,6 +172,7 @@ public class PerguntasDAO {
                 p.setVisualizacoes(rs.getInt("visualizacoes"));
                 p.setResolvida(rs.getBoolean("resolvida"));
                 p.setNomePessoa(rs.getString("nome_pessoa"));
+                p.setReputacaoPessoa(rs.getInt("reputacao_pessoa"));
                 p.setTags(rs.getString("tags"));
 
                 lista.add(p);

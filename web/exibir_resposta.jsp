@@ -111,19 +111,7 @@
 
                                     <% } %>
 
-                                    <% if (r.getCorreta() != null) { %>
-
-                                        <% if (r.getCorreta()) { %>
-                                            <span class="badge badge-success">
-                                                ✔ Resposta correta
-                                            </span>
-                                        <% } else { %>
-                                            <span class="badge badge-danger">
-                                                ✘ Resposta incorreta
-                                            </span>
-                                        <% } %>
-
-                                    <% } %>
+                   
                                 </div>
 
                                 <div class="vote-area">
@@ -154,48 +142,7 @@
 
                                 </div>
 
-                            </div>
-
-                            <% if ("PROFESSOR".equals(usuarioLogado.getPapel()) || "ADMIN".equals(usuarioLogado.getPapel())) { %>
-
-                                <div class="answer-actions">
-
-                                    <form method="post" action="RespostasController">
-                                        <input type="hidden" name="op" value="4">
-                                        <input type="hidden" name="id_resposta" value="<%= r.getIdResposta() %>">
-                                        <input type="hidden" name="id_pergunta" value="<%= id_pergunta %>">
-                                        <input type="hidden" name="correta" value="true">
-
-                                        <button type="submit" class="btn btn-success">
-                                            Marcar correta
-                                        </button>
-                                    </form>
-
-                                    <form method="post" action="RespostasController">
-                                        <input type="hidden" name="op" value="4">
-                                        <input type="hidden" name="id_resposta" value="<%= r.getIdResposta() %>">
-                                        <input type="hidden" name="id_pergunta" value="<%= id_pergunta %>">
-                                        <input type="hidden" name="correta" value="false">
-
-                                        <button type="submit" class="btn btn-danger">
-                                            Marcar incorreta
-                                        </button>
-                                    </form>
-
-                                    <form method="post" action="RespostasController">
-                                        <input type="hidden" name="op" value="4">
-                                        <input type="hidden" name="id_resposta" value="<%= r.getIdResposta() %>">
-                                        <input type="hidden" name="id_pergunta" value="<%= id_pergunta %>">
-                                        <input type="hidden" name="correta" value="null">
-
-                                        <button type="submit" class="btn btn-secondary">
-                                            Limpar correção
-                                        </button>
-                                    </form>
-
-                                </div>
-
-                            <% } %>
+                            </div>                          
 
                         </div>
 

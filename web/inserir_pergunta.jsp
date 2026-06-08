@@ -71,7 +71,7 @@
 
                     <div style="display: flex; gap: 1rem; margin-top: 2rem;">
                         <button type="submit" class="btn btn-primary">Postar pergunta</button>
-                        <a href="PerguntasController?op=2" class="btn btn-outline">Cancelar</a>
+                        <a href="comunidade.jsp" class="btn btn-outline">Cancelar</a>
                     </div>
                 </form>
             </div>

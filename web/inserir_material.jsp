@@ -67,7 +67,7 @@
 
                     <div style="display: flex; gap: 1rem; margin-top: 2rem;">
                         <button type="submit" class="btn btn-primary">Cadastrar</button>
-                        <a href="MateriaisController?op=2" class="btn btn-outline">Cancelar</a>
+                        <a href="biblioteca.jsp" class="btn btn-outline">Cancelar</a>
                     </div>
                 </form>
             </div>

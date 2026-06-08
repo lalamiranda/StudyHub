@@ -114,25 +114,48 @@
                     </div>
 
                     <div class="form-group">
-                        <label>Sexo</label>
+    <label>Sexo</label>
 
-                        <select name="sexo">
-                            <option value="naoInformado"
-                                <%= "naoInformado".equals(usuarioLogado.getSexo()) ? "selected" : "" %>>
-                                Não informado
-                            </option>
+    <div class="form-check">
+        <input 
+            type="radio" 
+            id="sexoFeminino" 
+            name="sexo" 
+            value="feminino"
+            <%= "feminino".equals(usuarioLogado.getSexo()) ? "checked" : "" %>>
+        <label for="sexoFeminino">Feminino</label>
+    </div>
 
-                            <option value="feminino"
-                                <%= "feminino".equals(usuarioLogado.getSexo()) ? "selected" : "" %>>
-                                Feminino
-                            </option>
+    <div class="form-check">
+        <input 
+            type="radio" 
+            id="sexoMasculino" 
+            name="sexo" 
+            value="masculino"
+            <%= "masculino".equals(usuarioLogado.getSexo()) ? "checked" : "" %>>
+        <label for="sexoMasculino">Masculino</label>
+    </div>
 
-                            <option value="masculino"
-                                <%= "masculino".equals(usuarioLogado.getSexo()) ? "selected" : "" %>>
-                                Masculino
-                            </option>
-                        </select>
-                    </div>
+    <div class="form-check">
+        <input 
+            type="radio" 
+            id="sexoOutro" 
+            name="sexo" 
+            value="outro"
+            <%= "outro".equals(usuarioLogado.getSexo()) ? "checked" : "" %>>
+        <label for="sexoOutro">Outro</label>
+    </div>
+
+    <div class="form-check">
+        <input 
+            type="radio" 
+            id="sexoNaoInformado" 
+            name="sexo" 
+            value="naoInformado"
+            <%= usuarioLogado.getSexo() == null || "naoInformado".equals(usuarioLogado.getSexo()) ? "checked" : "" %>>
+        <label for="sexoNaoInformado">Prefiro não dizer</label>
+    </div>
+</div>
 
                     <div class="form-group">
                         <label>Data de nascimento</label>

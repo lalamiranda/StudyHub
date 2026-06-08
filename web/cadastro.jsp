@@ -55,15 +55,30 @@
                 </div>
 
                 <div class="form-group">
-                    <label class="form-label" for="sexo">Sexo</label>
-                    <select id="sexo" name="sexo" class="form-control" required>
-                        <option value="">Selecione uma opção</option>
-                        <option value="feminino">Feminino</option>
-                        <option value="masculino">Masculino</option>
-                        <option value="outro">Outro</option>
-                        <option value="naoInformado">Prefiro não informar</option>
-                    </select>
-                </div>
+    <label class="form-label">
+        Sexo 
+    </label>
+
+    <div class="form-check">
+        <input type="radio" id="feminino" name="sexo" value="feminino" checked>
+        <label for="feminino">Feminino</label>
+    </div>
+
+    <div class="form-check">
+        <input type="radio" id="masculino" name="sexo" value="masculino">
+        <label for="masculino">Masculino</label>
+    </div>
+
+    <div class="form-check">
+        <input type="radio" id="outro" name="sexo" value="outro">
+        <label for="outro">Outro</label>
+    </div>
+
+    <div class="form-check">
+        <input type="radio" id="naoInformado" name="sexo" value="naoInformado">
+        <label for="naoInformado">Prefiro não dizer</label>
+    </div>
+</div>
 
                 <div class="form-group">
                     <label class="form-label" for="dataNascimento">Data de nascimento</label>

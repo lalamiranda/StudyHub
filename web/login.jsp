@@ -36,9 +36,12 @@
                     <input type="password" id="senha" name="senha" class="form-control" placeholder="••••••••" required>
                 </div>
 
-                <button type="submit" class="btn btn-primary" style="width: 100%; margin-bottom: 1rem;">
-                    Entrar
-                </button>
+                <button 
+    type="submit" 
+    class="btn btn-primary" 
+    style="width: 100%; margin-bottom: 1rem; text-align: center; display: flex; justify-content: center; align-items: center;">
+    Entrar
+</button>
             </form>
 
             <div class="login-footer" style="text-align: center; font-size: 0.9rem; color: var(--text-muted);">

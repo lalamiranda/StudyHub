@@ -18,6 +18,12 @@
     ArrayList<Tag> tagsFiltro = tagsDAO.listar();
 
     List perguntas = (List) request.getAttribute("lista");
+
+    String idTagSelecionada = request.getParameter("id_tag");
+
+    if (idTagSelecionada == null) {
+        idTagSelecionada = "";
+    }
 %>
 
 <!DOCTYPE html>
@@ -41,7 +47,7 @@
 
                 <div style="display: flex; gap: 1rem; margin-top: 1.5rem; flex-wrap: wrap;">
                     <a class="btn btn-primary" href="inserir_pergunta.jsp">Fazer nova pergunta</a>
-                    <a class="btn btn-outline" href="index.jsp">Voltar</a>
+                    <a class="btn btn-outline" href="comunidade.jsp">Voltar</a>
                 </div>
             </div>
         </div>
@@ -53,15 +59,26 @@
                     Filtrar por tag
                 </h3>
                 <div class="tag-filters">
-                    <a href="PerguntasController?op=2" class="tag-filter active">Todas</a>
-                    <% if (tagsFiltro != null && !tagsFiltro.isEmpty()) { %>
-                        <% for (Tag tag : tagsFiltro) { %>
-                            <a href="PerguntasController?op=2&id_tag=<%= tag.getIdTag() %>" class="tag-filter">
-                                <%= tag.getNome() %>
-                            </a>
-                        <% } %>
-                    <% } %>
-                </div>
+
+    <a href="PerguntasController?op=2"
+       class="tag-filter <%= idTagSelecionada.equals("") ? "active" : "" %>">
+        Todas
+    </a>
+
+        <% if (tagsFiltro != null && !tagsFiltro.isEmpty()) { %>
+
+        <% for (Tag tag : tagsFiltro) { %>
+
+            <a href="PerguntasController?op=2&id_tag=<%= tag.getIdTag() %>"
+               class="tag-filter <%= idTagSelecionada.equals(String.valueOf(tag.getIdTag())) ? "active" : "" %>">
+                <%= tag.getNome() %>
+            </a>
+
+            <% } %>
+
+            <% } %>
+
+                </div>  
             </div>
         </div>
 

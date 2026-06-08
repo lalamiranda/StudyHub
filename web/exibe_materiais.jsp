@@ -35,7 +35,7 @@
 
                 <div style="display: flex; gap: 1rem; margin-top: 1.5rem; flex-wrap: wrap;">
                     <a class="btn btn-primary" href="inserir_material.jsp">Cadastrar novo material</a>
-                    <a class="btn btn-outline" href="index.jsp">Voltar</a>
+                    <a class="btn btn-outline" href="biblioteca.jsp">Voltar</a>
                 </div>
             </div>
         </div>

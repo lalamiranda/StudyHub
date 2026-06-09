@@ -1,7 +1,10 @@
+<%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@page import="java.util.List"%>
+<%@page import="java.util.ArrayList"%>
 <%@page import="VO.Pessoa"%>
 <%@page import="VO.Material"%>
-<%@page import="java.util.List"%>
-<%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@page import="java.text.SimpleDateFormat"%>
+<%@page import="java.util.Date"%>
 
 <%
     Pessoa usuarioLogado = (Pessoa) session.getAttribute("usuarioLogado");
@@ -11,108 +14,137 @@
         return;
     }
 
-    List materiais = (List) request.getAttribute("lista");
+    List<Material> materiais = (List<Material>) request.getAttribute("lista");
+
+    // Formatador de data legível
+    SimpleDateFormat sdfEntrada = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    SimpleDateFormat sdfSaida   = new SimpleDateFormat("dd/MM/yyyy 'às' HH'h'mm");
 %>
 
 <!DOCTYPE html>
 <html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Biblioteca - StudyHub</title>
-    <link rel="stylesheet" href="assets/css/style.css">
-</head>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Materiais - StudyHub</title>
+        <link rel="stylesheet" href="assets/css/style.css">
+    </head>
 
-<body>
-    <%@include file="includes/menu.jsp" %>
+    <body>
+        <%@include file="includes/menu.jsp" %>
 
-    <div class="container">
-        <!-- Page Header -->
-        <div class="card">
-            <div class="card-body">
-                <h1 class="page-title">Biblioteca Digital</h1>
-                <p class="page-subtitle">Consulte e compartilhe materiais de estudo.</p>
+        <div class="container">
 
-                <div style="display: flex; gap: 1rem; margin-top: 1.5rem; flex-wrap: wrap;">
-                    <a class="btn btn-primary" href="inserir_material.jsp">Cadastrar novo material</a>
-                    <a class="btn btn-outline" href="biblioteca.jsp">Voltar</a>
+            <!-- Cabeçalho -->
+            <div class="card">
+                <div class="card-body">
+                    <h1 class="page-title">Materiais Digitais</h1>
+                    <p class="page-subtitle">Acesse vídeos, artigos, PDFs e outros recursos compartilhados pela comunidade.</p>
+                    <div style="display:flex; gap:.75rem; margin-top:1.25rem; flex-wrap:wrap;">
+                        <a class="btn btn-primary" href="inserir_material.jsp">Cadastrar material</a>
+                        <a class="btn btn-outline" href="index.jsp">Voltar</a>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <!-- Lista de materias -->
-        <div class="card" style="margin-top: 1.5rem;">
-            <div class="card-body">
-                <h3 style="font-size: 1rem; font-weight: 600; margin-bottom: 1rem; color: var(--text); border-left: 3px solid var(--accent); padding-left: 0.75rem;">
-                    Materiais cadastrados
-                </h3>
-
-                <% if (materiais != null && !materiais.isEmpty()) { %>
-                    <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 1.5rem;">
+            <!-- Lista -->
+            <div class="card" style="margin-top:1.5rem;">
+                <div class="card-body">
+                    <h3 class="section-heading">Materiais cadastrados</h3>
+                    <p class="section-count">
+                        <%
+                            if (materiais != null && !materiais.isEmpty()) {
+                        %>
                         Materiais encontrados: <strong><%= materiais.size() %></strong>
+                        <%
+                            } else {
+                        %>
+                        Nenhum material encontrado.
+                        <%
+                            }
+                        %>
                     </p>
 
-                    <div class="table-wrap">
-                        <table class="data-table">
-                            <thead>
-                                <tr>
-                                    <th>Título</th>
-                                    <th>Descrição</th>
-                                    <th>Tipo</th>
-                                    <th>Link</th>
-                                    <th>Cadastrado por</th>
-                                    <th>Data</th>
-                                    <th>Ações</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <% for (int i = 0; i < materiais.size(); i++) {
-                                    Material m = (Material) materiais.get(i);
-                                %>
-                                    <tr>
-                                        <td><strong><%= m.getTitulo() %></strong></td>
-                                        <td><%= m.getDescricao() %></td>
-                                        <td>
-                                            <span class="badge badge-<%= m.getTipo() %>">
-                                                <%= m.getTipo() %>
-                                            </span>
-                                        </td>
-                                        <td>
-                                            <a href="<%= m.getLinkExterno() %>" target="_blank" style="color: var(--accent); text-decoration: none; font-weight: 600;">
-                                                Acessar
-                                            </a>
-                                        </td>
-                                        <td><%= m.getNomePessoa() %></td>
-                                        <td><%= m.getDataUpload() %></td>
-                                        <td>
-                                            <% if (m.getIdPessoa() == usuarioLogado.getIdPessoa()) { %>
-                                            <a href="MateriaisController?op=4&id_material=<%= m.getIdMaterial() %>" class="btn btn-sm">
-                                                Editar
-                                            </a>
-                                            <a href="MateriaisController?op=3&id_material=<%= m.getIdMaterial() %>" 
-                                               onclick="return confirm('Tem certeza que deseja excluir este material?');" 
-                                               class="btn btn-sm btn-danger">
-                                                Excluir
-                                            </a>
-                                            <% } %>
-                                        </td>
-                                    </tr>
-                                <% } %>
-                            </tbody>
-                        </table>
-                    </div>
-                <% } else { %>
+                    <%
+                        if (materiais == null || materiais.isEmpty()) {
+                    %>
                     <div class="empty-state">
-                        <p style="font-size: 1rem; color: var(--text-muted);">
-                            Nenhum material cadastrado.
-                        </p>
-                        <a class="btn btn-primary" href="inserir_material.jsp" style="margin-top: 1rem;">
+                        <p>Nenhum material cadastrado até o momento.</p>
+                        <a class="btn btn-primary" href="inserir_material.jsp" style="margin-top:1rem;">
                             Cadastrar primeiro material
                         </a>
                     </div>
-                <% } %>
+
+                    <%
+                        } else {
+                    %>
+
+                    <div class="mat-list">
+                        <%
+                            for (Material m : materiais) {
+                                boolean ehAutor = usuarioLogado.getIdPessoa() == m.getIdPessoa();
+
+                                // Formatar data
+                                String dataFormatada = m.getDataUpload();
+                                try {
+                                    Date d = sdfEntrada.parse(m.getDataUpload());
+                                    dataFormatada = sdfSaida.format(d);
+                                } catch (Exception ex) { /* mantém original se falhar */ }
+
+                                // Badge CSS por tipo
+                                String tipo = (m.getTipo() != null ? m.getTipo().toUpperCase() : "OUTRO");
+                                String badgeClass = "badge-" + tipo;
+                        %>
+                        <div class="mat-card">
+                            <div class="mat-card-top">
+                                <!-- Título + badge de tipo -->
+                                <div class="mat-card-header">
+                                    <span class="mat-title"><%= m.getTitulo() %></span>
+                                    <span class="badge <%= badgeClass %>"><%= tipo %></span>
+                                </div>
+                                <!-- Descrição -->
+                                <p class="mat-desc"><%= m.getDescricao() %></p>
+                                <!-- Meta: autor + data -->
+                                <div class="mat-meta">
+                                    <span>Cadastrado por <strong><%= m.getNomePessoa() %></strong></span>
+                                    <span class="mat-meta-sep">·</span>
+                                    <span><%= dataFormatada %></span>
+                                </div>
+                            </div>
+
+                            <!-- Rodapé com ações -->
+                            <div class="mat-card-footer">
+                                <a href="<%= m.getLinkExterno() %>"
+                                   target="_blank"
+                                   rel="noopener noreferrer"
+                                   class="btn btn-primary btn-sm">
+                                    ↗ Acessar material
+                                </a>
+
+                                <% if (ehAutor) { %>
+                                <a href="MateriaisController?op=4&id_material=<%= m.getIdMaterial() %>"
+                                   class="btn-action btn-action-edit">
+                                    Editar
+                                </a>
+                                <a href="MateriaisController?op=6&id_material=<%= m.getIdMaterial() %>"
+                                   class="btn-action btn-action-delete"
+                                   onclick="return confirm('Tem certeza que deseja excluir este material?');">
+                                    Excluir
+                                </a>
+                                <% } %>
+                            </div>
+                        </div>
+                        <%
+                            }
+                        %>
+                    </div>
+
+                    <%
+                        }
+                    %>
+                </div>
             </div>
+
         </div>
-    </div>
-</body>
+    </body>
 </html>

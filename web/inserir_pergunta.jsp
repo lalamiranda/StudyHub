@@ -40,7 +40,7 @@
         <!-- Formulario -->
         <div class="card" style="margin-top: 1.5rem;">
             <div class="card-body">
-                <form action="PerguntasController" method="post">
+                <form action="PerguntasController?op=3" method="post">
                     <div class="form-group">
                         <label class="form-label" for="titulo">Título <span class="req">*</span></label>
                         <input type="text" id="titulo" name="titulo" class="form-control" placeholder="Ex: Como funciona o padrão MVC?" required>

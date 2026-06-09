@@ -112,6 +112,7 @@
                         <%
                             for (int cont = 0; cont < perguntas.size(); cont++) {
                                 Pergunta p = (Pergunta) perguntas.get(cont);
+                                boolean usuarioEhAutor = usuarioLogado.getIdPessoa() == p.getIdPessoa();
                         %>
                         <div class="q-card">
                             <h4 class="q-card-title"><%= p.getTitulo()%></h4>
@@ -131,9 +132,29 @@
                                 </span>
                                 <% }%>
 
-                                <a href="RespostasController?op=2&id_pergunta=<%= p.getIdPergunta()%>" style="margin-left: auto; color: var(--accent); text-decoration: none; font-weight: 600;">
-                                    Ver respostas
-                                </a>
+                                <div style="margin-left: auto; display: flex; gap: 0.75rem; align-items: center;">
+
+                                    <a href="RespostasController?op=2&id_pergunta=<%= p.getIdPergunta()%>"
+                                       style="color: var(--accent); text-decoration: none; font-weight: 600;">
+                                        Ver respostas
+                                    </a>
+
+                                    <% if (usuarioEhAutor) {%>
+
+                                    <a href="PerguntasController?op=4&id_pergunta=<%= p.getIdPergunta()%>"
+                                       class="btn-action btn-action-edit">
+                                        Editar
+                                    </a>
+
+                                    <a href="PerguntasController?op=6&id_pergunta=<%= p.getIdPergunta()%>"
+                                       class="btn-action btn-action-delete"
+                                       onclick="return confirm('Tem certeza que deseja excluir esta pergunta?');">
+                                        Excluir
+                                    </a>
+
+                                    <% } %>
+
+                                </div>
                             </div>
                         </div>
                         <%

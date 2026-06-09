@@ -2,6 +2,7 @@
 <%@page import="java.util.ArrayList"%>
 <%@page import="VO.Resposta"%>
 <%@page import="VO.Pessoa"%>
+<%@page import="java.text.SimpleDateFormat"%>
 
 <%
     Pessoa usuarioLogado = (Pessoa) session.getAttribute("usuarioLogado");
@@ -91,7 +92,11 @@
                                 </span>
 
                                 <span>
-                                    <%= r.getDataPostagem()%>
+                                    <%
+                                        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+                                    %>
+
+                                    <%= sdf.format(r.getDataPostagem())%>
                                 </span>
 
                                 <% if ("GOSTEI".equals(r.getVotoUsuario())) { %>

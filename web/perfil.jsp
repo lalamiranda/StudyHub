@@ -67,32 +67,34 @@
                         </div>
                     </div>
 
-                    <form action="PessoasController?op=4" method="post" class="form">
+                    <form action="PessoasController?op=4" method="post" class="profile-form">
 
                         <input type="hidden" name="idPessoa" value="<%= usuarioLogado.getIdPessoa()%>">
 
                         <div class="form-group">
-                            <label>Nome</label>
+                            <label class="form-label">Nome</label>
                             <input
                                 type="text"
                                 name="nome"
                                 value="<%= usuarioLogado.getNome()%>"
+                                class="form-control"
                                 required>
                         </div>
 
                         <div class="form-group">
-                            <label>Email</label>
+                            <label class="form-label">Email</label>
                             <input
                                 type="email"
                                 name="email"
                                 value="<%= usuarioLogado.getEmail()%>"
+                                class="form-control"
                                 required>
                         </div>
 
                         <div class="form-group">
-                            <label>Papel</label>
+                            <label class="form-label">Papel</label>
 
-                            <select name="papel" required>
+                            <select name="papel" class="form-control" required>
                                 <option value="ALUNO"
                                         <%= "ALUNO".equals(usuarioLogado.getPapel()) ? "selected" : ""%>>
                                     Aluno
@@ -106,10 +108,11 @@
                         </div>
 
                         <div class="form-group">
-                            <label>CPF</label>
+                            <label class="form-label">CPF</label>
                             <input
                                 type="text"
                                 value="<%= usuarioLogado.getCpf()%>"
+                                class="form-control"
                                 readonly>
                         </div>
 
@@ -158,11 +161,12 @@
                         </div>
 
                         <div class="form-group">
-                            <label>Data de nascimento</label>
+                            <label class="form-label">Data de nascimento</label>
                             <input
                                 type="date"
                                 name="dataNascimento"
-                                value="<%= usuarioLogado.getDataNascimento() == null ? "" : usuarioLogado.getDataNascimento()%>">
+                                value="<%= usuarioLogado.getDataNascimento() == null ? "" : usuarioLogado.getDataNascimento()%>"
+                                class="form-control">
                         </div>
 
                         <div class="profile-info">

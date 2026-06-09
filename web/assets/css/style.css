@@ -1233,3 +1233,273 @@ table.data-table { width: 100%; border-collapse: collapse; font-size: .86rem; }
     font-weight: 700;
     border: 1px solid #fde68a;
 }
+
+.card + .page-actions {
+    margin-top: 32px !important;
+}
+
+.page-actions {
+    margin-top: 32px;
+    display: flex;
+    align-items: center;
+    gap: 48px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.profile-form {
+    margin-top: 1.5rem;
+}
+
+.profile-form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.25rem 1.5rem;
+}
+
+.form-group-full {
+    grid-column: 1 / -1;
+}
+
+.profile-radio-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .75rem;
+}
+
+.profile-radio-option {
+    display: inline-flex;
+    align-items: center;
+    gap: .5rem;
+    padding: .65rem .9rem;
+    border: 1px solid var(--border-strong);
+    border-radius: 999px;
+    background: #ffffff;
+    color: var(--text);
+    font-size: .9rem;
+    cursor: pointer;
+    transition: .15s ease;
+}
+
+.profile-radio-option:hover {
+    background: var(--accent-soft);
+    border-color: var(--accent);
+}
+
+.profile-radio-option input {
+    accent-color: var(--accent);
+}
+
+.profile-form .form-control[readonly] {
+    background: #f8fafc;
+    color: var(--text-muted);
+    cursor: not-allowed;
+}
+
+.profile-info {
+    margin-top: 1.75rem;
+    border-top: 1px solid var(--border);
+}
+
+.form-actions {
+    margin-top: 1.75rem;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.action-buttons {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+.btn-action {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.45rem 0.8rem;
+    border-radius: 0.5rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+.btn-action-edit {
+    color: #1d4ed8;
+    background: #eff6ff;
+    border: 1px solid #bfdbfe;
+}
+
+.btn-action-edit:hover {
+    background: #dbeafe;
+}
+
+.btn-action-delete {
+    color: #dc2626;
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+}
+
+.btn-action-delete:hover {
+    background: #fee2e2;
+}
+
+.btn-primary {
+    justify-content: center;
+    text-align: center;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: .25rem .65rem;
+  border-radius: 999px;
+  font-size: .7rem;
+  font-weight: 700;
+  letter-spacing: .05em;
+  text-transform: uppercase;
+  font-family: var(--mono);
+  white-space: nowrap;
+}
+ 
+/* Tipos de material */
+.badge-PDF    { background: #fee2e2; color: #b91c1c; border: 1px solid #fecaca; }
+.badge-VIDEO  { background: #ede9fe; color: #6d28d9; border: 1px solid #ddd6fe; }
+.badge-SITE   { background: #d1fae5; color: #065f46; border: 1px solid #a7f3d0; }
+.badge-ARTIGO { background: #fef3c7; color: #92400e; border: 1px solid #fde68a; }
+.badge-OUTRO  { background: #f1f5f9; color: #52525b; border: 1px solid #e2e8f0; }
+ 
+/* Funções de usuário */
+.badge-ALUNO     { background: var(--accent-soft);  color: var(--accent);  border: 1px solid #bfdbfe; }
+.badge-PROFESSOR { background: var(--warning-soft); color: var(--warning); border: 1px solid #fde68a; }
+.badge-ADMIN     { background: var(--danger-soft);  color: var(--danger);  border: 1px solid #fecaca; }
+ 
+/* Status */
+.badge-ATIVO   { background: var(--success-soft); color: var(--success); border: 1px solid #a7f3d0; }
+.badge-INATIVO { background: #f1f5f9; color: #71717a; border: 1px solid #e2e8f0; }
+ 
+/* Outros */
+.badge-success { background: #dcfce7; color: #166534; border: 1px solid #a7f3d0; }
+.badge-danger  { background: #fee2e2; color: #b91c1c; border: 1px solid #fecaca; }
+.badge-neutral { background: #f1f5f9; color: #475569; border: 1px solid #e2e8f0; }
+ 
+/* ── BTN-DANGER (versão única) ──────────────────────── */
+.btn-danger {
+  background: transparent;
+  border: 1px solid #fecaca;
+  color: var(--danger);
+}
+.btn-danger:hover {
+  background: var(--danger-soft);
+  border-color: var(--danger);
+}
+ 
+/* ── SECTION HEADING (cabeçalho de seção interna) ───── */
+.section-heading {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text);
+  border-left: 3px solid var(--accent);
+  padding-left: .75rem;
+  margin-bottom: .4rem;
+}
+ 
+.section-count {
+  font-size: .85rem;
+  color: var(--text-muted);
+  margin-bottom: 1.5rem;
+}
+ 
+/* ── LISTA DE MATERIAIS ─────────────────────────────── */
+.mat-list {
+  display: flex;
+  flex-direction: column;
+  gap: .75rem;
+}
+ 
+/* Card individual */
+.mat-card {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: #ffffff;
+  box-shadow: var(--shadow);
+  overflow: hidden;
+  transition: border-color .15s, box-shadow .15s;
+}
+ 
+.mat-card:hover {
+  border-color: #93c5fd;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, .07);
+}
+ 
+/* Corpo do card */
+.mat-card-top {
+  padding: 1.125rem 1.375rem .875rem;
+}
+ 
+.mat-card-header {
+  display: flex;
+  align-items: center;
+  gap: .6rem;
+  flex-wrap: wrap;
+  margin-bottom: .5rem;
+}
+ 
+.mat-title {
+  font-size: .975rem;
+  font-weight: 700;
+  color: var(--text);
+  /* Capitaliza a primeira letra de cada palavra mesmo sem acento no dado */
+  text-transform: capitalize;
+}
+ 
+.mat-desc {
+  font-size: .875rem;
+  color: var(--text-muted);
+  line-height: 1.55;
+  margin: 0 0 .75rem 0;
+  /* Limita a 3 linhas com reticências */
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+ 
+.mat-meta {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: .4rem;
+  font-size: .78rem;
+  color: var(--text-muted);
+}
+ 
+.mat-meta strong {
+  color: var(--text);
+  font-weight: 600;
+}
+ 
+.mat-meta-sep {
+  color: var(--border-strong);
+}
+ 
+/* Rodapé com ações */
+.mat-card-footer {
+  display: flex;
+  align-items: center;
+  gap: .6rem;
+  flex-wrap: wrap;
+  padding: .7rem 1.375rem;
+  border-top: 1px solid var(--border);
+  background: #fafafa;
+}
+ 
+/* ── TABLE: impede quebra de cabeçalho ──────────────── */
+.data-table th {
+  white-space: nowrap;
+}
+ 

@@ -45,17 +45,20 @@ public class RespostasController extends HttpServlet {
 
         switch (op) {
 
+            //inserir resposta
             case "1": {
                 int idPergunta = Integer.parseInt(request.getParameter("id_pergunta"));
                 String textoResposta = request.getParameter("resposta");
 
                 Resposta resposta = new Resposta();
 
+                //Monta o objeto resposta
                 resposta.setIdPergunta(idPergunta);
                 resposta.setIdUsuario(usuarioLogado.getIdPessoa());
                 resposta.setResposta(textoResposta);
                 resposta.setCorreta(null);
 
+                //Salva no banco
                 boolean resultado = dao.inserir(resposta);
 
                 if (resultado) {
@@ -77,9 +80,11 @@ public class RespostasController extends HttpServlet {
                 break;
             }
 
+            //listar respostas
             case "2": {
                 int idPergunta = Integer.parseInt(request.getParameter("id_pergunta"));
 
+                //Lista as respostas daquela pergunta e também identifica se o usuário já votou
                 ArrayList<Resposta> lista = dao.listarPorPergunta(
                         idPergunta,
                         usuarioLogado.getIdPessoa()
@@ -94,9 +99,12 @@ public class RespostasController extends HttpServlet {
                 break;
             }
 
+            //votar resposta
             case "3": {
                 int idResposta = Integer.parseInt(request.getParameter("id_resposta"));
                 int idPergunta = Integer.parseInt(request.getParameter("id_pergunta"));
+                
+                //Pega o tipo do voto.
                 String tipo = request.getParameter("tipo");
 
                 if (!"GOSTEI".equals(tipo) && !"NAO_GOSTEI".equals(tipo)) {
@@ -104,6 +112,7 @@ public class RespostasController extends HttpServlet {
                     return;
                 }
 
+                //Registra ou atualiza o voto
                 dao.votarResposta(
                         idResposta,
                         usuarioLogado.getIdPessoa(),
@@ -129,6 +138,7 @@ public class RespostasController extends HttpServlet {
                 break;
             }
 
+            //Marcar resposta correta/incorreta
             case "4": {
                 int idResposta = Integer.parseInt(request.getParameter("id_resposta"));
                 int idPergunta = Integer.parseInt(request.getParameter("id_pergunta"));
@@ -142,6 +152,7 @@ public class RespostasController extends HttpServlet {
                     correta = false;
                 }
 
+                //Só professor ou admin pode marcar resposta como correta/incorreta
                 if ("PROFESSOR".equals(usuarioLogado.getPapel()) || "ADMIN".equals(usuarioLogado.getPapel())) {
                     dao.atualizarCorreta(idResposta, correta);
                 }

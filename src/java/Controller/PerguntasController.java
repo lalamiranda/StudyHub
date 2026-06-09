@@ -42,6 +42,7 @@ public class PerguntasController extends HttpServlet {
 
         switch (op) {
 
+            //listar perguntas
             case "2": {
 
                 String idTagParam = request.getParameter("id_tag");
@@ -59,14 +60,17 @@ public class PerguntasController extends HttpServlet {
                 break;
             }
 
+            //inserir pergunta
             case "3": {
 
                 Pergunta pergunta = new Pergunta();
 
+                //Monta o objeto pergunta com os dados do formulário
                 pergunta.setTitulo(request.getParameter("titulo"));
                 pergunta.setDescricao(request.getParameter("descricao"));
                 pergunta.setIdPessoa(pessoaLogada.getIdPessoa());
 
+                //Insere a pergunta no banco e retorna o ID.
                 int idPergunta = dao.inserir(pergunta);
 
                 if (idPergunta > 0) {
@@ -74,9 +78,11 @@ public class PerguntasController extends HttpServlet {
                     String[] tagsSelecionadas = request.getParameterValues("tags");
 
                     TagsDAO tagsDAO = new TagsDAO();
+                    //Salva as tags relacionadas à pergunta
                     tagsDAO.salvarTagsDaPergunta(idPergunta, tagsSelecionadas);
 
                     PessoasDAO pessoasDAO = new PessoasDAO();
+                    //Atualiza a reputação do usuário.
                     pessoasDAO.atualizarReputacao(pessoaLogada.getIdPessoa());
 
                     Pessoa pessoaAtualizada = pessoasDAO.buscarPorId(pessoaLogada.getIdPessoa());
@@ -94,6 +100,7 @@ public class PerguntasController extends HttpServlet {
                 break;
             }
 
+            //abrir edição
             case "4": {
 
                 int idPergunta = Integer.parseInt(request.getParameter("id_pergunta"));
@@ -105,6 +112,7 @@ public class PerguntasController extends HttpServlet {
                     return;
                 }
 
+                //Impede editar pergunta de outra pessoa
                 if (pergunta.getIdPessoa() != pessoaLogada.getIdPessoa()) {
                     response.sendRedirect("PerguntasController?op=2&erro=sem_permissao");
                     return;
@@ -118,6 +126,7 @@ public class PerguntasController extends HttpServlet {
                 break;
             }
 
+            //salvar edição
             case "5": {
 
                 int idPergunta = Integer.parseInt(request.getParameter("id_pergunta"));
@@ -129,6 +138,7 @@ public class PerguntasController extends HttpServlet {
                 pergunta.setDescricao(request.getParameter("descricao"));
                 pergunta.setIdPessoa(pessoaLogada.getIdPessoa());
 
+                //Atualiza somente se o usuário for autor
                 boolean atualizou = dao.atualizarSeForAutor(pergunta);
 
                 if (atualizou) {
@@ -140,10 +150,12 @@ public class PerguntasController extends HttpServlet {
                 break;
             }
 
+            //excluir pergunta
             case "6": {
 
                 int idPergunta = Integer.parseInt(request.getParameter("id_pergunta"));
 
+                //Exclui somente se o usuário for o autor
                 boolean excluiu = dao.excluirSeForAutor(idPergunta, pessoaLogada.getIdPessoa());
 
                 if (excluiu) {

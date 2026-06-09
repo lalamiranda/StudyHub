@@ -8,19 +8,19 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-/**
- *
- * @author lavin
- */
+
 @WebServlet(name = "LogoutController", urlPatterns = {"/LogoutController"})
 public class LogoutController extends HttpServlet {
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
+        //Pega a sessão atual sem criar uma nova.
         HttpSession session = request.getSession(false);
 
+        //Encerra a sessão.
         if (session != null) {
+            
             session.invalidate();
         }
 

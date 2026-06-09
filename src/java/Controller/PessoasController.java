@@ -37,7 +37,8 @@ public class PessoasController extends HttpServlet {
         }
 
         switch (operacao) {
-
+            
+            //cadastrar pessoa
             case 1 -> {
                 String cpf = request.getParameter("cpf");
 
@@ -88,13 +89,16 @@ public class PessoasController extends HttpServlet {
                 }
             }
 
+            //listar usuários
             case 2 -> {
                 request.setAttribute("lista", p.listar());
 
                 RequestDispatcher rd = request.getRequestDispatcher("/exibe_pessoas.jsp");
+                //Encaminha os dados para a tela exibe_pessoas
                 rd.forward(request, response);
             }
 
+            //login
             case 3 -> {
                 String email = request.getParameter("email");
                 String senha = request.getParameter("senha");
@@ -109,6 +113,7 @@ public class PessoasController extends HttpServlet {
                 }
             }
 
+            //excluir conta
             case 4 -> {
                 Pessoa usuarioLogado = (Pessoa) session.getAttribute("usuarioLogado");
 

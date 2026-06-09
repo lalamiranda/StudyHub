@@ -19,11 +19,13 @@ public class LoginController extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
+        //Pega email e senha enviados pelo formulário.   
         String email = request.getParameter("email");
         String senha = request.getParameter("senha");
 
         PessoasDAO dao = new PessoasDAO();
-
+        
+        //Chama o DAO para verificar se o usuário existe.
         Pessoa pessoa = dao.login(email, senha);
 
         if (pessoa != null) {

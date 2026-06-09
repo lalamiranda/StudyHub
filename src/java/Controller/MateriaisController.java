@@ -35,36 +35,44 @@ public class MateriaisController extends HttpServlet {
 
         switch (op) {
 
+            //Cadastrar material
             case "1": {
                 Pessoa usuarioLogado = (Pessoa) session.getAttribute("usuarioLogado");
 
                 Material material = new Material();
 
+                //Pega os dados do formulário e define quem cadastrou
                 material.setTitulo(request.getParameter("titulo"));
                 material.setDescricao(request.getParameter("descricao"));
                 material.setLinkExterno(request.getParameter("link_externo"));
                 material.setTipo(request.getParameter("tipo"));
                 material.setIdPessoa(usuarioLogado.getIdPessoa());
 
+                //Salva no banco
                 dao.inserir(material);
 
                 response.sendRedirect("MateriaisController?op=2");
                 break;
             }
 
+            //listar materiais
             case "2": {
+                //Busca todos os materiais.
                 request.setAttribute("lista", dao.listar());
 
                 request.getRequestDispatcher("exibe_materiais.jsp")
                         .forward(request, response);
                 break;
             }
+            
+            //excluir material
             case "3": {
                 int idMaterial = Integer.parseInt(request.getParameter("id_material"));
                 Pessoa usuarioLogado3 = (Pessoa) session.getAttribute("usuarioLogado");
 
                 Material materialExcluir = dao.buscarPorId(idMaterial);
 
+                //Verifica se quem quer excluir é o autor
                 if (materialExcluir == null || materialExcluir.getIdPessoa() != usuarioLogado3.getIdPessoa()) {
                     response.sendRedirect("MateriaisController?op=2");
                     return;
@@ -75,6 +83,8 @@ public class MateriaisController extends HttpServlet {
                 response.sendRedirect("MateriaisController?op=2");
                 break;
             }
+            
+            //abrir edição
             case "4": {
                 int idMaterial = Integer.parseInt(request.getParameter("id_material"));
                 Pessoa usuarioLogado4 = (Pessoa) session.getAttribute("usuarioLogado");
@@ -93,6 +103,8 @@ public class MateriaisController extends HttpServlet {
 
                 break;
             }
+            
+            //salvar edição
             case "5": {
                 Pessoa usuarioLogado5 = (Pessoa) session.getAttribute("usuarioLogado");
                 int idMaterial = Integer.parseInt(request.getParameter("id_material"));

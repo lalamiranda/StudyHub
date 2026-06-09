@@ -61,6 +61,14 @@ public class MateriaisController extends HttpServlet {
             }
             case "3": {
                 int idMaterial = Integer.parseInt(request.getParameter("id_material"));
+                Pessoa usuarioLogado3 = (Pessoa) session.getAttribute("usuarioLogado");
+
+                Material materialExcluir = dao.buscarPorId(idMaterial);
+
+                if (materialExcluir == null || materialExcluir.getIdPessoa() != usuarioLogado3.getIdPessoa()) {
+                    response.sendRedirect("MateriaisController?op=2");
+                    return;
+                }
 
                 dao.excluir(idMaterial);
 
@@ -69,8 +77,14 @@ public class MateriaisController extends HttpServlet {
             }
             case "4": {
                 int idMaterial = Integer.parseInt(request.getParameter("id_material"));
+                Pessoa usuarioLogado4 = (Pessoa) session.getAttribute("usuarioLogado");
 
                 Material material = dao.buscarPorId(idMaterial);
+
+                if (material == null || material.getIdPessoa() != usuarioLogado4.getIdPessoa()) {
+                    response.sendRedirect("MateriaisController?op=2");
+                    return;
+                }
 
                 request.setAttribute("material", material);
 
@@ -80,9 +94,19 @@ public class MateriaisController extends HttpServlet {
                 break;
             }
             case "5": {
+                Pessoa usuarioLogado5 = (Pessoa) session.getAttribute("usuarioLogado");
+                int idMaterial = Integer.parseInt(request.getParameter("id_material"));
+
+                Material materialExistente = dao.buscarPorId(idMaterial);
+
+                if (materialExistente == null || materialExistente.getIdPessoa() != usuarioLogado5.getIdPessoa()) {
+                    response.sendRedirect("MateriaisController?op=2");
+                    return;
+                }
+
                 Material material = new Material();
 
-                material.setIdMaterial(Integer.parseInt(request.getParameter("id_material")));
+                material.setIdMaterial(idMaterial);
                 material.setTitulo(request.getParameter("titulo"));
                 material.setDescricao(request.getParameter("descricao"));
                 material.setLinkExterno(request.getParameter("link_externo"));

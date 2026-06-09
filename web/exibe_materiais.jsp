@@ -85,6 +85,7 @@
                                         <td><%= m.getNomePessoa() %></td>
                                         <td><%= m.getDataUpload() %></td>
                                         <td>
+                                            <% if (m.getIdPessoa() == usuarioLogado.getIdPessoa()) { %>
                                             <a href="MateriaisController?op=4&id_material=<%= m.getIdMaterial() %>" class="btn btn-sm">
                                                 Editar
                                             </a>
@@ -93,6 +94,7 @@
                                                class="btn btn-sm btn-danger">
                                                 Excluir
                                             </a>
+                                            <% } %>
                                         </td>
                                     </tr>
                                 <% } %>

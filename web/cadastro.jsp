@@ -14,8 +14,8 @@
         <div class="auth-card">
             <div class="auth-logo">StudyHub</div>
 
-            <h2 style="font-size: 1.5rem; margin-bottom: 0.5rem; color: var(--text);">Criar conta</h2>
-            <p style="color: var(--text-muted); margin-bottom: 1.5rem; font-size: 0.95rem;">
+            <h2 style="font-size: 1.5rem; margin-bottom: 0.5rem; color: var(--text); text-align: center;">Criar conta</h2>
+            <p style="color: var(--text-muted); margin-bottom: 1.5rem; font-size: 0.95rem; text-align: center;">
                 Cadastre-se para acessar o StudyHub
             </p>
 

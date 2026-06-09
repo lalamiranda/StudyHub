@@ -1503,3 +1503,6 @@ table.data-table { width: 100%; border-collapse: collapse; font-size: .86rem; }
   white-space: nowrap;
 }
  
+.portal-card p {
+  flex: 1;
+}

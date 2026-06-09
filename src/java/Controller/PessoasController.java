@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import java.util.Locale;
 
 public class PessoasController extends HttpServlet {
 
@@ -52,7 +53,13 @@ public class PessoasController extends HttpServlet {
                 Pessoa pes = new Pessoa();
 
                 pes.setCpf(cpf);
-                pes.setNome(request.getParameter("nome"));
+                String nome = request.getParameter("nome");
+
+                if (nome != null) {
+                    nome = nome.trim().toUpperCase(new Locale("pt", "BR"));
+                }
+
+                pes.setNome(nome);
                 pes.setEmail(request.getParameter("email"));
                 pes.setSexo(request.getParameter("sexo"));
                 pes.setDataNascimento(request.getParameter("dataNascimento"));
@@ -108,7 +115,13 @@ public class PessoasController extends HttpServlet {
                 Pessoa pes = new Pessoa();
 
                 pes.setIdPessoa(usuarioLogado.getIdPessoa());
-                pes.setNome(request.getParameter("nome"));
+                String nome = request.getParameter("nome");
+
+                if (nome != null) {
+                    nome = nome.trim().toUpperCase(new Locale("pt", "BR"));
+                }
+
+                pes.setNome(nome);
                 pes.setEmail(request.getParameter("email"));
                 pes.setSexo(request.getParameter("sexo"));
                 pes.setDataNascimento(request.getParameter("dataNascimento"));

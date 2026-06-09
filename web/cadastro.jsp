@@ -32,8 +32,13 @@
                 <form action="PessoasController?op=1&publico=1" method="post">
                     <div class="form-group">
                         <label class="form-label" for="nome">Nome</label>
-                        <input type="text" id="nome" name="nome" class="form-control" placeholder="Seu nome completo" required>
-                    </div>
+                        <input type="text"
+                               id="nome"
+                               name="nome"
+                               class="form-control"
+                               placeholder="Seu nome completo"
+                               required
+                               style="text-transform: uppercase;">                    </div>
 
                     <div class="form-group">
                         <label class="form-label" for="cpf">CPF</label>
@@ -133,6 +138,13 @@
                 }
 
                 cpfInput.value = cpf;
+            });
+        </script>
+        <script>
+            const nomeInput = document.getElementById("nome");
+
+            nomeInput.addEventListener("input", function () {
+                nomeInput.value = nomeInput.value.toUpperCase();
             });
         </script>
     </body>

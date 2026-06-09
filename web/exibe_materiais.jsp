@@ -16,7 +16,7 @@
 
     List<Material> materiais = (List<Material>) request.getAttribute("lista");
 
-    // Formatador de data legível
+    // Formatador de data 
     SimpleDateFormat sdfEntrada = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     SimpleDateFormat sdfSaida   = new SimpleDateFormat("dd/MM/yyyy 'às' HH'h'mm");
 %>
@@ -91,20 +91,20 @@
                                     dataFormatada = sdfSaida.format(d);
                                 } catch (Exception ex) { /* mantém original se falhar */ }
 
-                                // Badge CSS por tipo
+                                // CSS por tipo
                                 String tipo = (m.getTipo() != null ? m.getTipo().toUpperCase() : "OUTRO");
                                 String badgeClass = "badge-" + tipo;
                         %>
                         <div class="mat-card">
                             <div class="mat-card-top">
-                                <!-- Título + badge de tipo -->
+                                
                                 <div class="mat-card-header">
                                     <span class="mat-title"><%= m.getTitulo() %></span>
                                     <span class="badge <%= badgeClass %>"><%= tipo %></span>
                                 </div>
-                                <!-- Descrição -->
+                                
                                 <p class="mat-desc"><%= m.getDescricao() %></p>
-                                <!-- Meta: autor + data -->
+                                
                                 <div class="mat-meta">
                                     <span>Cadastrado por <strong><%= m.getNomePessoa() %></strong></span>
                                     <span class="mat-meta-sep">·</span>

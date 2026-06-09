@@ -14,7 +14,10 @@
             <div class="auth-card">
                 <div class="auth-logo">StudyHub</div>
 
-                <h2 style="font-size: 1.5rem; margin-bottom: 0.5rem; color: var(--text); text-align: center;">Criar conta</h2>
+                <h2 style="font-size: 1.5rem; margin-bottom: 0.5rem; color: var(--text); text-align: center;">
+                    Criar conta
+                </h2>
+
                 <p style="color: var(--text-muted); margin-bottom: 1.5rem; font-size: 0.95rem; text-align: center;">
                     Cadastre-se para acessar o StudyHub
                 </p>
@@ -38,7 +41,8 @@
                                class="form-control"
                                placeholder="Seu nome completo"
                                required
-                               style="text-transform: uppercase;">                    </div>
+                               style="text-transform: uppercase;">
+                    </div>
 
                     <div class="form-group">
                         <label class="form-label" for="cpf">CPF</label>
@@ -53,7 +57,12 @@
 
                     <div class="form-group">
                         <label class="form-label" for="email">E-mail</label>
-                        <input type="email" id="email" name="email" class="form-control" placeholder="seu@email.com" required>
+                        <input type="email"
+                               id="email"
+                               name="email"
+                               class="form-control"
+                               placeholder="seu@email.com"
+                               required>
                     </div>
 
                     <div class="form-group">
@@ -66,9 +75,7 @@
                     </div>
 
                     <div class="form-group">
-                        <label class="form-label">
-                            Sexo 
-                        </label>
+                        <label class="form-label">Sexo</label>
 
                         <div class="form-check">
                             <input type="radio" id="feminino" name="sexo" value="feminino" checked>
@@ -93,15 +100,58 @@
 
                     <div class="form-group">
                         <label class="form-label" for="dataNascimento">Data de nascimento</label>
-                        <input type="date" id="dataNascimento" name="dataNascimento" class="form-control" required>
+                        <input type="date"
+                               id="dataNascimento"
+                               name="dataNascimento"
+                               class="form-control"
+                               required>
                     </div>
 
                     <div class="form-group">
                         <label class="form-label" for="senha">Senha</label>
-                        <input type="password" id="senha" name="senha" class="form-control" placeholder="••••••••" required>
+
+                        <div class="password-wrapper">
+                            <input type="password"
+                                   id="senha"
+                                   name="senha"
+                                   class="form-control"
+                                   placeholder="••••••••"
+                                   required>
+
+                            <button type="button"
+                                    class="toggle-password"
+                                    onclick="mostrarSenha()"
+                                    aria-label="Mostrar senha">
+
+                                <span id="iconeSenha">
+                                    <svg viewBox="0 0 24 24" fill="none">
+                                    <path d="M3 3L21 21"
+                                          stroke="currentColor"
+                                          stroke-width="2"
+                                          stroke-linecap="round"/>
+                                    <path d="M10.58 10.58C10.22 10.94 10 11.44 10 12C10 13.1 10.9 14 12 14C12.56 14 13.06 13.78 13.42 13.42"
+                                          stroke="currentColor"
+                                          stroke-width="2"
+                                          stroke-linecap="round"/>
+                                    <path d="M9.88 5.18C10.56 5.06 11.27 5 12 5C18.5 5 22.5 12 22.5 12C21.64 13.5 20.63 14.76 19.52 15.77"
+                                          stroke="currentColor"
+                                          stroke-width="2"
+                                          stroke-linecap="round"
+                                          stroke-linejoin="round"/>
+                                    <path d="M6.23 6.23C3.39 8.15 1.5 12 1.5 12C1.5 12 5.5 19 12 19C13.77 19 15.33 18.48 16.69 17.69"
+                                          stroke="currentColor"
+                                          stroke-width="2"
+                                          stroke-linecap="round"
+                                          stroke-linejoin="round"/>
+                                    </svg>
+                                </span>
+                            </button>
+                        </div>
                     </div>
 
-                    <button type="submit" class="btn btn-primary" style="width: 100%; margin-bottom: 1rem;">
+                    <button type="submit"
+                            class="btn btn-primary"
+                            style="width: 100%; margin-bottom: 1rem;">
                         Criar Conta
                     </button>
                 </form>
@@ -116,19 +166,16 @@
                 </div>
             </div>
         </div>
+
         <script>
             const cpfInput = document.getElementById("cpf");
 
             cpfInput.addEventListener("input", function () {
                 let cpf = cpfInput.value;
 
-                // Remove tudo que não for número
                 cpf = cpf.replace(/\D/g, "");
-
-                // Limita a 11 números
                 cpf = cpf.substring(0, 11);
 
-                // Coloca os pontos e o traço automaticamente
                 if (cpf.length > 9) {
                     cpf = cpf.replace(/(\d{3})(\d{3})(\d{3})(\d{1,2})/, "$1.$2.$3-$4");
                 } else if (cpf.length > 6) {
@@ -140,12 +187,67 @@
                 cpfInput.value = cpf;
             });
         </script>
+
         <script>
             const nomeInput = document.getElementById("nome");
 
             nomeInput.addEventListener("input", function () {
                 nomeInput.value = nomeInput.value.toUpperCase();
             });
+        </script>
+
+        <script>
+            function mostrarSenha() {
+                const senhaInput = document.getElementById("senha");
+                const iconeSenha = document.getElementById("iconeSenha");
+                const botaoSenha = document.querySelector(".toggle-password");
+
+                if (senhaInput.type === "password") {
+                    senhaInput.type = "text";
+                    botaoSenha.setAttribute("aria-label", "Ocultar senha");
+
+                    iconeSenha.innerHTML = `
+                        <svg viewBox="0 0 24 24" fill="none">
+                            <path d="M1.5 12C1.5 12 5.5 5 12 5C18.5 5 22.5 12 22.5 12C22.5 12 18.5 19 12 19C5.5 19 1.5 12 1.5 12Z"
+                                  stroke="currentColor"
+                                  stroke-width="2"
+                                  stroke-linecap="round"
+                                  stroke-linejoin="round"/>
+                            <circle cx="12"
+                                    cy="12"
+                                    r="3"
+                                    stroke="currentColor"
+                                    stroke-width="2"/>
+                        </svg>
+                    `;
+                } else {
+                    senhaInput.type = "password";
+                    botaoSenha.setAttribute("aria-label", "Mostrar senha");
+
+                    iconeSenha.innerHTML = `
+                        <svg viewBox="0 0 24 24" fill="none">
+                            <path d="M3 3L21 21"
+                                  stroke="currentColor"
+                                  stroke-width="2"
+                                  stroke-linecap="round"/>
+                            <path d="M10.58 10.58C10.22 10.94 10 11.44 10 12C10 13.1 10.9 14 12 14C12.56 14 13.06 13.78 13.42 13.42"
+                                  stroke="currentColor"
+                                  stroke-width="2"
+                                  stroke-linecap="round"/>
+                            <path d="M9.88 5.18C10.56 5.06 11.27 5 12 5C18.5 5 22.5 12 22.5 12C21.64 13.5 20.63 14.76 19.52 15.77"
+                                  stroke="currentColor"
+                                  stroke-width="2"
+                                  stroke-linecap="round"
+                                  stroke-linejoin="round"/>
+                            <path d="M6.23 6.23C3.39 8.15 1.5 12 1.5 12C1.5 12 5.5 19 12 19C13.77 19 15.33 18.48 16.69 17.69"
+                                  stroke="currentColor"
+                                  stroke-width="2"
+                                  stroke-linecap="round"
+                                  stroke-linejoin="round"/>
+                        </svg>
+                    `;
+                }
+            }
         </script>
     </body>
 </html>

@@ -40,8 +40,8 @@ StudyHub/
 │── src/
 │── web/
 │── .gitignore
-│── build.xml
 │── README.md
+│── build.xml
 ```
 
 ---
@@ -80,4 +80,4 @@ Este projeto foi desenvolvido com fins acadêmicos, visando aplicar conceitos de
 ## 👩‍💻 Autores
 
 Desenvolvido por **Lavinia Maria Barbosa de Miranda e Miguel França Vita**
-🎓 Estudantes de Análise e Desenvolvimento de Sistemas
+* 🎓 Estudantes de Análise e Desenvolvimento de Sistemas
